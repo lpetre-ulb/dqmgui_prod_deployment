@@ -1,0 +1,11 @@
+--- a/image/rescale.hpp	2023-10-25 19:59:23.693617066 +0200
++++ b/image/rescale.hpp	2023-10-25 19:52:59.298914757 +0200
+@@ -100,7 +100,7 @@
+ 
+     //----------------------------------------------------------------------------
+ 
+-    template <typename PixelType> struct create_accum_pixel_type : public create_accum_pixel_type<PixelType> {};
++    template <typename PixelType> struct create_accum_pixel_type {};
+ 
+     template <typename Layout>
+     struct create_accum_pixel_type<pixel<bits8,Layout> >

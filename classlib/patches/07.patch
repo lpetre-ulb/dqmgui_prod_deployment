@@ -1,0 +1,451 @@
+diff --git a/src/iobase/IOSelectMethod.cpp b/src/iobase/IOSelectMethod.cpp
+index 64552dd..5726852 100644
+--- a/src/iobase/IOSelectMethod.cpp
++++ b/src/iobase/IOSelectMethod.cpp
+@@ -29,6 +29,8 @@ IOSelectMethod::addReq (const IOSelectRequest &req)
+ void
+ IOSelectMethod::removeReq (const IOSelectRequest &req, size_t index)
+ {
++#define UNUSED(x) (void)(x)
++    UNUSED(req);
+     ASSERT (index < m_requests.size ());
+     ASSERT (m_requests [index].fd == req.fd);
+     ASSERT (m_requests [index].channel == req.channel);
+diff --git a/src/iobase/InetSocket.cpp b/src/iobase/InetSocket.cpp
+index 39eee66..f57c44a 100644
+--- a/src/iobase/InetSocket.cpp
++++ b/src/iobase/InetSocket.cpp
+@@ -4,7 +4,7 @@
+ #include "classlib/utils/DebugAids.h"
+ #include "classlib/sysapi/InetSocket.h"
+ #include <cstdio>
+-
++#define UNUSED(x) (void)(x)
+ namespace lat {
+ 
+ 
+@@ -62,6 +62,7 @@ InetAddress::InetAddress (unsigned long address,
+ 			  unsigned short port /* = 0 */,
+ 			  int family /* = AF_INET */)
+ {
++  UNUSED(family);
+     ASSERT(family == AF_INET);
+ 
+     char srvnr[32];
+@@ -82,6 +83,7 @@ InetAddress::InetAddress (unsigned long address,
+ 			  const char *proto /* = "tcp" */,
+ 			  int family /* = AF_INET */)
+ {
++  UNUSED(family);
+     ASSERT(family == AF_INET);
+     protoent *p = getprotobyname(proto);
+     if (! p) throw NetworkError ("getprotobyname()", proto);
+diff --git a/src/iobase/TempFile.cpp b/src/iobase/TempFile.cpp
+index f3a6595..9500a4a 100644
+--- a/src/iobase/TempFile.cpp
++++ b/src/iobase/TempFile.cpp
+@@ -81,7 +81,7 @@ domkstemp(char *path, ...)
+ 
+ /** Create a unique temporary file.  */
+ template <typename R, typename T, typename U>
+-inline typename define_if<sizeof(((int (*) (char *, int)) &mkstemps) > 0), R>::type
++inline typename define_if<sizeof(((int (*) (char *, int)) &mkstemps) > NULL), R>::type
+ domkstemps(T path, U suffixlen, void *)
+ { return mkstemps(path, suffixlen); }
+ 
+diff --git a/src/utils/DebugAids.cpp b/src/utils/DebugAids.cpp
+index f014b1b..894c8a0 100644
+--- a/src/utils/DebugAids.cpp
++++ b/src/utils/DebugAids.cpp
+@@ -83,7 +83,7 @@ GetLogicalAddress (PVOID addr, PTSTR name, DWORD length,
+ }
+ #endif
+ 
+-#if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)) && defined(__x86_64__) // FIXME: Check
++#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) // FIXME: Check
+ extern "C" {
+     typedef unsigned _Unwind_Ptr __attribute__((__mode__(__pointer__)));
+     struct _Unwind_Context;
+@@ -168,7 +168,7 @@ unwindWalkStack (_Unwind_Context *ctx, void *data)
+     writev (fd, bufs, nbufs);
+     return _URC_NO_REASON;
+ }
+-#endif // (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)) && defined(__x86_64__)
++#endif // GCC 3.4+
+ 
+ 
+ #if __hpux
+@@ -868,10 +868,10 @@ DebugAids::stacktrace (IOFD fd /* = IOFD_INVALID */)
+     sprintf (buffer, PSTACK_COMMAND, (unsigned long) getpid (), fd);
+     system (buffer);
+ 
+-#elif (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)) && defined(__x86_64__)
++#elif __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
+     // FIXME: Check for _Unwind*, compilers other than GCC support this API
+     _Unwind_Backtrace (unwindWalkStack, &fd);
+-#endif // (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)) && defined(__x86_64__)
++#endif
+ 
+     // FIXME: mpatrol has some generic unix unwind code.
+     // FIXME: from unix faq: ask debugger to dump stack trace
+diff --git a/src/utils/MultiMethod.cpp b/src/utils/MultiMethod.cpp
+index 6310165..54da4c0 100644
+--- a/src/utils/MultiMethod.cpp
++++ b/src/utils/MultiMethod.cpp
+@@ -4,7 +4,7 @@
+ #include "classlib/utils/Log.h"
+ #include <algorithm>
+ #include <utility>
+-
++#define UNUSED(x) (void)(x)
+ namespace lat {
+ 
+ /** The multi-method logging flag. */
+@@ -1135,6 +1135,7 @@ MultiMethod::dispatch (XTypeInfo **actualTypes,
+ void
+ MultiMethod::noViableAlt (XTypeInfo **actualTypes) const
+ {
++  UNUSED(actualTypes);
+ #ifndef NDEBUG
+     LOG (0, error, LFmultimethod, m_data->m_name << " (#"
+ 	 << m_data->m_key << ") (");
+@@ -1187,6 +1188,9 @@ MultiMethod::ambiguity (XTypeInfo **actualTypes,
+ 			Score **candidates,
+ 			Score *best) const
+ {
++  UNUSED(actualTypes);
++  UNUSED(candidates);
++  UNUSED(best);
+ #ifndef NDEBUG
+     LOG (0, error, LFmultimethod, m_data->m_name << " (#"
+ 	 << m_data->m_key << ") (");
+diff --git a/src/utils/Signal.cpp b/src/utils/Signal.cpp
+index 09563fd..7fcef14 100644
+--- a/src/utils/Signal.cpp
++++ b/src/utils/Signal.cpp
+@@ -318,7 +318,7 @@ Signal::queue (pid_t process, int sig, int value /* = 0 */)
+     process = 0; // silence unused warning
+     sig = 0;     // silence unused warning
+     value = 0;   // silence unused warning
+-    return process + sig + (long long) value;
++    return 0;
+ #endif
+ }
+ 
+@@ -335,7 +335,7 @@ Signal::queue (pid_t process, int sig, void *value)
+     process = 0; // silence unused warning
+     sig = 0;     // silence unused warning
+     value = 0;   // silence unused warning
+-    return process + sig + (long long) value;
++    return 0;
+ #endif
+ }
+ 
+@@ -350,7 +350,7 @@ Signal::queue (int sig, int value /* = 0 */)
+ #else
+     sig = 0;   // silence unused warning
+     value = 0; // silence unused warning
+-    return sig + (long long) value;
++    return 0;
+ #endif
+ }
+ 
+@@ -365,7 +365,7 @@ Signal::queue (int sig, void *value)
+ #else
+     sig = 0;   // silence unused warning
+     value = 0; // silence unused warning
+-    return sig + (long long)value;
++    return 0;
+ #endif
+ }
+ 
+@@ -452,7 +452,7 @@ Signal::wait (const sigset_t *mask,
+     mask = 0;  // silence unused warning
+     info = 0;  // silence unused warning
+     msecs = 0; // silence unused warning
+-    return (long long) mask + (long long)info + msecs;
++    return 0;
+ #endif
+ }
+ 
+diff --git a/src/utils/StringOps.cpp b/src/utils/StringOps.cpp
+index 9b9402f..c1ea415 100644
+--- a/src/utils/StringOps.cpp
++++ b/src/utils/StringOps.cpp
+@@ -4,7 +4,7 @@
+ #include "classlib/utils/DebugAids.h"
+ #include <cstring>
+ #include <cctype>
+-
++#define UNUSED(x) (void)(x)
+ namespace lat {
+ 
+ //////////////////////////////////////////////////////////////////////
+@@ -119,6 +119,7 @@ StringOps::rawrfind (const char		*s,
+ 		     int		offset,
+ 		     bool		caseless /* = false */)
+ {
++  UNUSED(slen);
+     ASSERT (offset >= 0);
+     ASSERT ((size_t) offset <= slen);
+ 
+@@ -633,6 +634,7 @@ StringOps::split (const char *s, size_t slen,
+ 		  const FieldList &fields,
+ 		  int nmax, int first, int last)
+ {
++  UNUSED(slen);
+     ASSERT (fields.size () % 2 == 0);
+     ASSERT (nmax >= 0);
+ 
+@@ -693,6 +695,7 @@ StringOps::section (const char *s, size_t slen,
+ 		    const FieldList &fields,
+ 		    int first, int last)
+ {
++  UNUSED(slen);
+     if (fields.empty ())
+ 	return "";
+ 
+diff --git a/src/utils/Time.cpp b/src/utils/Time.cpp
+index 2c9b5c3..2da3deb 100644
+--- a/src/utils/Time.cpp
++++ b/src/utils/Time.cpp
+@@ -332,7 +332,6 @@ Time::nanoformat (int minwidth /* = 1 */, int maxwidth /* = 9 */) const
+     ASSERT (maxwidth <= 9);
+ 
+     // Calculate the nanosecond fraction.  This will be < 1000000000.
+-    long value = m_nsecs % SEC_NSECS;
++    unsigned int value = m_nsecs % SEC_NSECS;
+-    ASSERT (value >= 0);
+     ASSERT (value < SEC_NSECS);
+ 
+@@ -354,7 +354,7 @@ Time::nanoformat (int minwidth /* = 1 */, int maxwidth /* = 9 */) const
+     // minwidth.
+     char buf [10];
+     char *p = buf + 8;
+-    sprintf (buf, "%09ld", value);
++    sprintf (buf, "%09d", value);
+     while (p > buf + minwidth - 1 && *p == '0')
+ 	*p-- = '\0';
+ 
+diff --git a/src/utils/TimeInfo.cpp b/src/utils/TimeInfo.cpp
+index 92ed42a..1c29859 100644
+--- a/src/utils/TimeInfo.cpp
++++ b/src/utils/TimeInfo.cpp
+@@ -1,4 +1,3 @@
+-#include <bits/types.h>
+ 
+ #include "classlib/utils/TimeInfo.h"
+ #include "classlib/utils/DebugAids.h"
+@@ -296,7 +295,7 @@ TimeInfo::init (void)
+ 	if (pstat_getprocessor (&psp, sizeof(psp), 1, 0) != -1)
+ 	{
+ 	    s_features |= FEATURE_EXACT_MHZ;
+-	    s_ghz = psp.psp_iticksperclktick * (__clock_t)sysconf(_SC_CLK_TCK) * 1e-9;
++	    s_ghz = psp.psp_iticksperclktick * sysconf(_SC_CLK_TCK) * 1e-9;
+ 	    s_hiResFactor = 1e9 / s_ghz;
+ 	}
+     }
+@@ -379,7 +378,7 @@ TimeInfo::time (void)
+     struct timespec now; clock_gettime (CLOCK_MONOTONIC, &now);
+     return (now.tv_sec * 1e9) + now.tv_nsec;
+ #elif _POSIX_VERSION > 0
+-    struct tms now; return times (&now) * (1e9 / (__clock_t)sysconf(_SC_CLK_TCK));
++    struct tms now; return times (&now) * (1e9 / CLK_TCK);
+ #else
+     // Do not use process-relative time: we probably can't measure real
+     // time anyway (only user + system), and even if we can, we'll end
+@@ -427,7 +426,7 @@ TimeInfo::resolution (void)
+     struct timespec res; clock_getres (CLOCK_MONOTONIC, &res);
+     return (res.tv_sec * 1e9) + res.tv_nsec;
+ #elif _POSIX_VERSION > 0
+-    return 1e9 / (__clock_t)sysconf(_SC_CLK_TCK);
++    return 1e9 / CLK_TCK;
+ #else
+     return 1e9 / CLOCKS_PER_SEC;
+ #endif
+@@ -844,9 +843,9 @@ TimeInfo::processTimes (NanoSecs &user, NanoSecs &system, NanoSecs &real)
+     //
+     // Note that on linux and hp-ux s_clockBase is precise.  Other
+     // systems resort to estimated real time based on call to init.
+-    struct tms now; real = times (&now) * (1e9 / (__clock_t)sysconf(_SC_CLK_TCK));
+-    user = now.tms_utime * (1e9/(__clock_t)sysconf(_SC_CLK_TCK));
+-    system = now.tms_stime * (1e9/(__clock_t)sysconf(_SC_CLK_TCK));
++    struct tms now; real = times (&now) * (1e9 / CLK_TCK);
++    user = now.tms_utime * (1e9/CLK_TCK);
++    system = now.tms_stime * (1e9/CLK_TCK);
+     real -= s_clockBase;
+ #elif _WIN32
+     // Real time will be based on an estimate from call to init; the
+diff --git a/src/utils/UUID.cpp b/src/utils/UUID.cpp
+index 8abba2a..d9213e6 100644
+--- a/src/utils/UUID.cpp
++++ b/src/utils/UUID.cpp
+@@ -512,7 +512,7 @@ UUID::getNodeID(unsigned char *id)
+ 		    int s;
+ 		    struct ifreq ifr;
+ 		    memset(&ifr, 0, sizeof(ifr));
+-		    strncpy(ifr.ifr_name, ifp->ifa_name, sizeof(ifr.ifr_name));
++		    memcpy(ifr.ifr_name, ifp->ifa_name, sizeof(ifr.ifr_name));
+ 		    if ((s = socket(ifp->ifa_addr->sa_family, SOCK_DGRAM, 0)) >= 0
+ 			&& ioctl(s, SIOCGIFHWADDR, &ifr) >= 0
+ 			&& (a = (unsigned char *) &ifr.ifr_hwaddr.sa_data)
+diff --git a/src/zip/LZOCompressor.cpp b/src/zip/LZOCompressor.cpp
+index 7ad1d90..9524270 100644
+--- a/src/zip/LZOCompressor.cpp
++++ b/src/zip/LZOCompressor.cpp
+@@ -290,7 +290,7 @@ LZOCompressor::compress (void *into, IOSize length)
+         char lzo1x_999  [LZO1X_999_MEM_COMPRESS];
+         char lzo1y_1    [LZO1Y_MEM_COMPRESS];
+         char lzo1y_999  [LZO1Y_999_MEM_COMPRESS];
+-        char lzo1z_1    [LZO1Z_MEM_COMPRESS];
++        char lzo1z_1    [LZO1_MEM_COMPRESS];
+         char lzo1z_999  [LZO1Z_999_MEM_COMPRESS];
+         char lzo2a_999  [LZO2A_999_MEM_COMPRESS];
+     };
+diff --git a/src/zip/MD5Digest.cpp b/src/zip/MD5Digest.cpp
+index 8a1fe0f..3d1ce76 100644
+--- a/src/zip/MD5Digest.cpp
++++ b/src/zip/MD5Digest.cpp
+@@ -1,10 +1,11 @@
+ #include "classlib/zip/MD5Digest.h"
+-#include "openssl/evp.h"
++#include <openssl/evp.h>
+ 
+ namespace lat {
+ 
+-struct MD5Digest::Context : EVP_MD_CTX
++struct MD5Digest::Context 
+ {
++  EVP_MD_CTX* ctx;
+   unsigned char resval[EVP_MAX_MD_SIZE];
+   unsigned int reslen;
+ };
+@@ -13,15 +14,15 @@ struct MD5Digest::Context : EVP_MD_CTX
+ MD5Digest::MD5Digest (void)
+     : m_context (new Context)
+ {
+-  EVP_MD_CTX_init(m_context);
+-  EVP_DigestInit_ex(m_context, EVP_md5(), 0);
++  EVP_MD_CTX_reset(m_context->ctx);
++  EVP_DigestInit_ex(m_context->ctx, EVP_md5(), 0);
+   m_context->reslen = 0;
+ }
+ 
+ /** Destroy a digest.  No-op.  */
+ MD5Digest::~MD5Digest (void)
+ {
+-  EVP_MD_CTX_cleanup(m_context);
++  EVP_MD_CTX_free(m_context->ctx);
+   delete m_context;
+ }
+ 
+@@ -30,7 +31,7 @@ Digest::Value
+ MD5Digest::digest (void) const
+ {
+   if (! m_context->reslen)
+-    EVP_DigestFinal_ex(m_context, &m_context->resval[0], &m_context->reslen);
++    EVP_DigestFinal_ex(m_context->ctx, &m_context->resval[0], &m_context->reslen);
+ 
+   return Value(&m_context->resval[0], &m_context->resval[0] + m_context->reslen);
+ }
+@@ -39,16 +40,16 @@ MD5Digest::digest (void) const
+ void
+ MD5Digest::update (const void *data, IOSize n)
+ {
+-  EVP_DigestUpdate(m_context, data, n);
++  EVP_DigestUpdate(m_context->ctx, data, n);
+ }
+ 
+ /** Reset the digest.  */
+ void
+ MD5Digest::reset (void)
+ {
+-  EVP_MD_CTX_cleanup(m_context);
+-  EVP_MD_CTX_init(m_context);
+-  EVP_DigestInit_ex(m_context, EVP_md5(), 0);
++  EVP_MD_CTX_free(m_context->ctx);
++  EVP_MD_CTX_reset(m_context->ctx);
++  EVP_DigestInit_ex(m_context->ctx, EVP_md5(), 0);
+   m_context->reslen = 0;
+ }
+ 
+diff --git a/src/zip/SHA1Digest.cpp b/src/zip/SHA1Digest.cpp
+index c769530..be08305 100644
+--- a/src/zip/SHA1Digest.cpp
++++ b/src/zip/SHA1Digest.cpp
+@@ -4,8 +4,9 @@
+ 
+ namespace lat {
+ 
+-struct SHA1Digest::Context : EVP_MD_CTX
++struct SHA1Digest::Context
+ {
++  EVP_MD_CTX* ctx;
+   unsigned char resval[EVP_MAX_MD_SIZE];
+   unsigned int reslen;
+ };
+@@ -14,15 +15,15 @@ struct SHA1Digest::Context : EVP_MD_CTX
+ SHA1Digest::SHA1Digest (void)
+     : m_context (new Context)
+ {
+-  EVP_MD_CTX_init(m_context);
+-  EVP_DigestInit_ex(m_context, EVP_sha1(), 0);
++  EVP_MD_CTX_init(m_context->ctx);
++  EVP_DigestInit_ex(m_context->ctx, EVP_sha1(), 0);
+   m_context->reslen = 0;
+ }
+ 
+ /** Destroy a digest.  No-op.  */
+ SHA1Digest::~SHA1Digest (void)
+ {
+-  EVP_MD_CTX_cleanup(m_context);
++  EVP_MD_CTX_free(m_context->ctx);
+   delete m_context;
+ }
+ 
+@@ -31,7 +32,7 @@ Digest::Value
+ SHA1Digest::digest (void) const
+ {
+   if (! m_context->reslen)
+-    EVP_DigestFinal_ex(m_context, &m_context->resval[0], &m_context->reslen);
++    EVP_DigestFinal_ex(m_context->ctx, &m_context->resval[0], &m_context->reslen);
+ 
+   return Value(&m_context->resval[0], &m_context->resval[0] + m_context->reslen);
+ }
+@@ -40,16 +41,16 @@ SHA1Digest::digest (void) const
+ void
+ SHA1Digest::update (const void *data, IOSize n)
+ {
+-  EVP_DigestUpdate(m_context, data, n);
++  EVP_DigestUpdate(m_context->ctx, data, n);
+ }
+ 
+ /** Reset the digest.  */
+ void
+ SHA1Digest::reset (void)
+ {
+-  EVP_MD_CTX_cleanup(m_context);
+-  EVP_MD_CTX_init(m_context);
+-  EVP_DigestInit_ex(m_context, EVP_sha1(), 0);
++  EVP_MD_CTX_free(m_context->ctx);
++  EVP_MD_CTX_reset(m_context->ctx);
++  EVP_DigestInit_ex(m_context->ctx, EVP_sha1(), 0);
+   m_context->reslen = 0;
+ }
+ 
+diff --git a/src/zip/TarInputStream.cpp b/src/zip/TarInputStream.cpp
+index 21b5fec..c6cfa6f 100644
+--- a/src/zip/TarInputStream.cpp
++++ b/src/zip/TarInputStream.cpp
+@@ -452,8 +452,9 @@ TarInputStream::readExtendedAttrs (TarMember &xdata, uint8_t &xfields, IOOffset
+ 	   throw TarError (TarError::HEADER_VALUE_ERROR);
+ 
+ 	// Find property name end at the first equal sign.
+-	char *propname = ++end;
+-	if (! (end = strchr(propname, '=')) || end - p > reclen)
++	const char *propname = ++end;
++	const char *temp_end = &(*end);
++	if (! (temp_end = strchr(propname, '=')) || end - p > reclen)
+ 	    throw TarError (TarError::HEADER_VALUE_ERROR);
+ 	ptrdiff_t proplen = end++ - propname;
+ 	size_t attrlen =  p+reclen-1-end;

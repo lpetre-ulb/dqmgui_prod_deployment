@@ -63,14 +63,13 @@ It aims to replace the existing one (`Deploy`), found in [`dmwm/deployment`](htt
 
 This procedure has been tested on a RHEL8 Openstack VM.
 
-
 1. Install the system packages:
 
   ```bash
   sudo yum install -y tmux git bzip2 libglvnd-opengl libX11-devel libXext-devel libXft-devel libXpm-devel mesa-libGLU mesa-libGLU-devel perl-Env perl-Switch perl-Thread-Queue glibc-headers libidn libXcursor libXi libXinerama libXrandr perl perl-Digest-MD5 tcsh zsh root python3-root epel-release python3-pip libcurl-devel python36-devel boost-python3-devel protobuf-devel jemalloc-devel pcre-devel boost-devel lzo-devel cmake xz-devel python3-sphinx openssl-devel libpng-devel lijpeg-turbo-devel 
   ```
 
-1. Create a link to `libDQMGUI.so` which we will be compiling shortly:
+2. Create a link to `libDQMGUI.so` which we will be compiling shortly:
   
   ```bash
   ln -s /data/srv/<DMWM tag>/sw/el8_amd64_gcc11/cms/dqmgui/<DQMGUI tag>/128/lib/libDQMGUI.so /usr/lib64/libDQMGUI.so
@@ -87,7 +86,7 @@ This procedure has been tested on a RHEL8 Openstack VM.
   ln -s /data/srv/HG2903c/sw/el8_amd64_gcc11/cms/dqmgui/10.0.0/128/lib/libDQMGUI.so /usr/lib64/libDQMGUI.so
   ```
 
-1. Add a non-privileged user, create and give access to necessary directories and switch to it:
+3. Add a non-privileged user, create and give access to necessary directories and switch to it:
   
   ```bash
   adduser dqm
@@ -98,7 +97,7 @@ This procedure has been tested on a RHEL8 Openstack VM.
   sudo su dqm
   ```
 
-1. Start the deployment (`dev` flavor):
+4. Start the deployment (`dev` flavor):
   
   ```bash
   cd ~
@@ -111,7 +110,6 @@ This procedure has been tested on a RHEL8 Openstack VM.
   # Start all the services
   /data/srv/current/config/dqmgui/manage -f dev start "I did read documentation"
   ```
-
 
 ## [Debug] Selectively run parts of the installation script
 

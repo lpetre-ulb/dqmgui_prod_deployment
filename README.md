@@ -105,7 +105,7 @@ This procedure has been tested on a RHEL8 Openstack VM.
   git clone https://github.com/cms-DQM/dqm_gui_prod_deployment
   
   # Start the deployment script, it will take some time to finish
-  bash /home/dqm/dqm_gui_prod_deployment /deploy_dqm_online_el8.sh
+  bash /home/dqm/dqm_gui_prod_deployment/deploy_dqm_online_el8.sh
 
   # Start all the services
   /data/srv/current/config/dqmgui/manage -f dev start "I did read documentation"

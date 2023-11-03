@@ -66,7 +66,7 @@ This procedure has been tested on a RHEL8 Openstack VM.
 1. Install the system packages:
 
   ```bash
-  sudo yum install -y tmux git bzip2 libglvnd-opengl libX11-devel libXext-devel libXft-devel libXpm-devel mesa-libGLU mesa-libGLU-devel perl-Env perl-Switch perl-Thread-Queue glibc-headers libidn libXcursor libXi libXinerama libXrandr perl perl-Digest-MD5 tcsh zsh root python3-root epel-release python3-pip libcurl-devel python36-devel boost-python3-devel protobuf-devel jemalloc-devel pcre-devel boost-devel lzo-devel cmake xz-devel python3-sphinx openssl-devel libpng-devel lijpeg-turbo-devel 
+  sudo yum install -y tmux git bzip2 libglvnd-opengl libX11-devel libXext-devel libXft-devel libXpm-devel mesa-libGLU mesa-libGLU-devel perl-Env perl-Switch perl-Thread-Queue glibc-headers libidn libXcursor libXi libXinerama libXrandr perl perl-Digest-MD5 tcsh zsh root python3-root epel-release python3-pip libcurl-devel python36-devel boost-python3-devel protobuf-devel jemalloc-devel pcre-devel boost-devel lzo-devel cmake xz-devel python3-sphinx openssl-devel libpng-devel libjpeg-turbo-devel 
   ```
 
 2. Create a link to `libDQMGUI.so` which we will be compiling shortly:

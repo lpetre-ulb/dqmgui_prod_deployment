@@ -106,10 +106,10 @@ This procedure has been tested on a RHEL8 Openstack VM.
   ```bash
   cd ~
   # Clone this script and all necessary files, like patches
-  git clone https://github.com/cms-DQM/dqm_gui_prod_deployment
+  git clone https://github.com/cms-DQM/dqmgui_prod_deployment
   
   # Start the deployment script, it will take some time to finish
-  bash /home/dqm/dqm_gui_prod_deployment/deploy_dqm_online_el8.sh
+  bash /home/dqm/dqmgui_prod_deployment/deploy_dqmgui.sh
 
   # Start all the services
   /data/srv/current/config/dqmgui/manage -f dev start "I did read documentation"
@@ -119,7 +119,7 @@ This procedure has been tested on a RHEL8 Openstack VM.
 
   ```bash
   firewall-cmd --list-all-zones
-  firewall-cmd --zone=public --add-port=8030/tcp # online    
+  firewall-cmd --zone=public --add-port=8030/tcp # online
   firewall-cmd --zone=public --add-port=8060/tcp # dev
   firewall-cmd --zone=public --add-port=8070/tcp # online/dev
   firewall-cmd --zone=public --add-port=8080/tcp # offline

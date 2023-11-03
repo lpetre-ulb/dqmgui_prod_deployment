@@ -23,7 +23,7 @@ set -ex
 EUID_USER_DQM=1000
 
 # Default architecture. It doesn't really play a role now.
-ARCHITECTURE=el8_amd64_gcc11
+# ARCHITECTURE=el8_amd64_gcc11
 
 # Main directory we're installing into.
 INSTALLATION_DIR=/data/srv
@@ -179,12 +179,12 @@ create_directories() {
     ln -s $INSTALLATION_DIR/$DMWM_GIT_TAG $INSTALLATION_DIR/current
 
     # Directories for external source and lib files (e.g. classlib)
-    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src
-    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/lib
+    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src
+    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/lib
 
     # DQMGUI dirs
-    echo "DEBUG: Creating subdirectory $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG"
-    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG
+    echo "DEBUG: Creating subdirectory $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG"
+    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG
 
 }
 
@@ -231,20 +231,20 @@ install_rotoglup() {
     cd $ROTOGLUP_TMP_DIR
     #patch -p1 < $SCRIPT_DIR/rotoglup/patches/01.patch
     patch -p1 <"$SCRIPT_DIR/rotoglup/patches/02.patch"
-    mv $ROTOGLUP_TMP_DIR/rtgu $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/rtgu
+    mv $ROTOGLUP_TMP_DIR/rtgu $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/rtgu
     cd $INSTALLATION_DIR/
     rm -rf $ROTOGLUP_TMP_DIR
 }
 
 # Compilation step for classlib
 compile_classlib() {
-    cd $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib-3.1.3
+    cd $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/classlib-3.1.3
 
     #INCLUDE_DIRS="$INCLUDE_DIRS:/usr/include/lzo" make -j `nproc`
     make -j "$(nproc)" CXXFLAGS="-Wno-error=extra -ansi -pedantic -W -Wall -Wno-long-long -Werror"
 
     # Move the compiled library in the libs dir
-    mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib-3.1.3/.libs/libclasslib.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/lib/libclasslib.so
+    mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/classlib-3.1.3/.libs/libclasslib.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/lib/libclasslib.so
 
 }
 
@@ -272,15 +272,15 @@ install_classlib() {
         !/^\S+: / && s{\S+LZO((C|Dec)ompressor|Constants|Error)\S+}{}g' \
         $CLASSLIB_TMP_DIR/classlib-3.1.3/Makefile
 
-    if [ -d $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib-3.1.3 ]; then
-        rm -rf $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib-3.1.3
+    if [ -d $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/classlib-3.1.3 ]; then
+        rm -rf $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/classlib-3.1.3
     fi
 
     # Move the classlib files inside the installation dir, needed for compiling the GUI
-    mv $CLASSLIB_TMP_DIR/classlib-3.1.3 $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/
+    mv $CLASSLIB_TMP_DIR/classlib-3.1.3 $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/
 
     # Make a link so that DQMGUI compilation can find the classlib headers easily
-    ln -s $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib-3.1.3/classlib $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib
+    ln -s $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/classlib-3.1.3/classlib $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/classlib
 
     rm -rf $CLASSLIB_TMP_DIR
 }
@@ -288,7 +288,7 @@ install_classlib() {
 install_boost_gil() {
     BOOST_GIL_TMP_DIR=/tmp/boost_gil
     _clone_from_git $BOOST_GIL_GIT_URL $BOOST_GIL_GIT_TAG $BOOST_GIL_TMP_DIR
-    mv $BOOST_GIL_TMP_DIR/include/boost $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/boost
+    mv $BOOST_GIL_TMP_DIR/include/boost $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost
     rm -rf $BOOST_GIL_TMP_DIR
 }
 
@@ -296,8 +296,8 @@ install_gil_numeric() {
     NUMERIC_TMP_DIR=/tmp/numeric
     mkdir -p $NUMERIC_TMP_DIR
     tar -xf "$SCRIPT_DIR/numeric/numeric.tar.gz" -C $NUMERIC_TMP_DIR
-    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/boost/gil/extension/
-    mv $NUMERIC_TMP_DIR/numeric $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/boost/gil/extension/numeric
+    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost/gil/extension/
+    mv $NUMERIC_TMP_DIR/numeric $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost/gil/extension/numeric
     rm -rf $NUMERIC_TMP_DIR
 }
 
@@ -314,26 +314,26 @@ install_dmwm() {
 
 # env.sh and init.sh file creation. They're needed by other scripts (e.g. manage).
 _create_env_and_init_sh() {
-    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/profile.d/
+    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/profile.d/
 
     # init.sh contents. This is sourced by env.sh
-    echo "export PATH=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/bin:$PATH
+    echo "export PATH=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/bin:$PATH
 export PYTHONPATH=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/lib/python${PYTHON_VERSION}/site-packages:$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/lib64/python${PYTHON_VERSION}/site-packages
 .  $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/bin/activate
-" >$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/profile.d/init.sh
+" >$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/profile.d/init.sh
 
     # env.sh contents. This is sourced by the manage script
-    echo ". $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/profile.d/init.sh
-export YUI_ROOT=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/yui
-export EXTJS_ROOT=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/extjs
-export D3_ROOT=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/d3
-export ROOTJS_ROOT=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/jsroot
+    echo ". $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/profile.d/init.sh
+export YUI_ROOT=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/yui
+export EXTJS_ROOT=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/extjs
+export D3_ROOT=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/d3
+export ROOTJS_ROOT=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/jsroot
 export MONITOR_ROOT=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv
 export DQMGUI_VERSION='$DQMGUI_GIT_TAG';
 # For pointing to the custom built libraries
-export LD_PRELOAD=\"$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/libDQMGUI.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/lib/libclasslib.so\"
-export LD_LIBRARY_PATH="$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/:$LD_LIBRARY_PATH"
-" >$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/profile.d/env.sh
+export LD_PRELOAD=\"$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/libDQMGUI.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/lib/libclasslib.so\"
+export LD_LIBRARY_PATH="$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/:$LD_LIBRARY_PATH"
+" >$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/profile.d/env.sh
 }
 
 # Crete the Python3 virtual environment for the GUI
@@ -349,8 +349,8 @@ _create_python_venv() {
 
     # Now use the new venv's python
     python_venv_exe=$python_venv_dir/bin/python
-    cd $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/
-    eval $python_venv_exe -m pip install -r $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/requirements.txt
+    cd $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/
+    eval $python_venv_exe -m pip install -r $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/requirements.txt
 
     echo "Done"
     # Needed for specifying the PYTHONPATH later
@@ -362,10 +362,10 @@ _create_python_venv() {
 # External requirements for building the GUI
 # Must be run after the venv is created
 _create_makefile_ext() {
-    echo "INCLUDE_DIRS = . $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp /usr/include/root /usr/include/libpng16 /usr/include/jemalloc $(python3-config --includes | sed -e 's/-I//g') $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src /usr/include/google/protobuf /usr/include/boost
+    echo "INCLUDE_DIRS = . $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp /usr/include/root /usr/include/libpng16 /usr/include/jemalloc $(python3-config --includes | sed -e 's/-I//g') $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src /usr/include/google/protobuf /usr/include/boost
 
-LIBRARY_DIRS = . /usr/lib64/root $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/lib /usr/lib /usr/lib64 $(python3-config --ldflags | sed -e 's/-L//g' | sed -e '[[:space:]]-l[a-zA-Z0-9\.]+')  $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp/ $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/
-" >$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/makefile.ext
+LIBRARY_DIRS = . /usr/lib64/root $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/lib /usr/lib /usr/lib64 $(python3-config --ldflags | sed -e 's/-L//g' | sed -e '[[:space:]]-l[a-zA-Z0-9\.]+')  $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp/ $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/
+" >$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/makefile.ext
 
 }
 
@@ -374,34 +374,34 @@ LIBRARY_DIRS = . /usr/lib64/root $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTUR
 # Then runs the actual compilation, which is the part that takes the longest
 # in this script.
 compile_dqmgui() {
-    cd $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/
+    cd $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/
     # Links to python libraries so that the build command can find them
-    if [ ! -L $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/lib/libboost_python.so ]; then
-        ln -s /usr/lib64/libboost_python3.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/lib/libboost_python.so
+    if [ ! -L $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/lib/libboost_python.so ]; then
+        ln -s /usr/lib64/libboost_python3.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/lib/libboost_python.so
     fi
 
-    if [ ! -L "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/lib/libpython${PYTHON_VERSION}.so" ]; then
-        ln -s /usr/lib64/libpython3.so "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/lib/libpython${PYTHON_VERSION}.so"
+    if [ ! -L "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/lib/libpython${PYTHON_VERSION}.so" ]; then
+        ln -s /usr/lib64/libpython3.so "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/lib/libpython${PYTHON_VERSION}.so"
     fi
 
     # The actual build command. Uses the makefile in the DQMGUI's repo.
-    PYTHONPATH="$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/lib/python${PYTHON_VERSION}/site-packages:$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/lib64/python${PYTHON_VERSION}/site-packages" CPLUS_INCLUDE_PATH="$(python3-config --includes | sed -e 's/-I//g')" $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/bin/python $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/setup.py -v build_system -s DQM -d
+    PYTHONPATH="$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/lib/python${PYTHON_VERSION}/site-packages:$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/lib64/python${PYTHON_VERSION}/site-packages" CPLUS_INCLUDE_PATH="$(python3-config --includes | sed -e 's/-I//g')" $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/bin/python $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/setup.py -v build_system -s DQM -d
 
     # Stuff that I found being done in the dqmgui spec file. I kind of blindy copy paste it
     # here because reasons.
-    $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/bin/python $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/setup.py -v install_system -s DQM
+    $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/bin/python $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/setup.py -v install_system -s DQM
 
     # Move executables to expected place
     for exe in DQMCollector visDQMIndex visDQMRender; do
-        mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp/$exe $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/bin/$exe
+        mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp/$exe $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/bin/$exe
     done
 
     # Move libs to expected place
-    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/
-    mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp/libDQMGUI.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/libDQMGUI.so
+    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/
+    mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp/libDQMGUI.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/libDQMGUI.so
 
     # Move the custom Boost.Python interface library to libs.
-    mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp/Accelerator.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/build/lib/Monitoring/DQM/Accelerator.so
+    mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp/Accelerator.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/build/lib/Monitoring/DQM/Accelerator.so
 }
 
 # Installation procedure of the DQMGUI repository.
@@ -414,24 +414,24 @@ install_dqmgui() {
     _clone_from_git $DQMGUI_GIT_URL $DQMGUI_GIT_TAG $DQMGUI_TMP_DIR
 
     # Move dqmgui source and bin files to appropriate directory
-    if [ -d $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG ]; then
-        rm -rf $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG
+    if [ -d $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG ]; then
+        rm -rf $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG
     fi
-    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128
+    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128
 
-    mv $DQMGUI_TMP_DIR $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG
+    mv $DQMGUI_TMP_DIR $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG
 
-    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/data
+    mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/data
     mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/
     if [ -d $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/templates ]; then
         rm -rf $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/templates
     fi
 
-    mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/templates $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/templates
+    mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/templates $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/templates
 
     if [ ! -L $INSTALLATION_DIR/$DMWM_GIT_TAG/apps/dqmgui ]; then
-        echo "DEBUG: Creating link $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG <-- $INSTALLATION_DIR/$DMWM_GIT_TAG/apps/dqmgui"
-        ln -s $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG $INSTALLATION_DIR/$DMWM_GIT_TAG/apps/dqmgui
+        echo "DEBUG: Creating link $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG <-- $INSTALLATION_DIR/$DMWM_GIT_TAG/apps/dqmgui"
+        ln -s $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG $INSTALLATION_DIR/$DMWM_GIT_TAG/apps/dqmgui
     fi
 
     # Create python venv for all python "binaries" and webserver
@@ -448,25 +448,25 @@ install_dqmgui() {
 install_yui() {
     YUI_TMP_DIR=/tmp/yui
     _clone_from_git $YUI_GIT_URL $YUI_GIT_TAG $YUI_TMP_DIR
-    mv $YUI_TMP_DIR $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/yui
+    mv $YUI_TMP_DIR $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/yui
 }
 
 install_extjs() {
     EXTJS_TMP_DIR=/tmp/extjs
     _clone_from_git $EXTJS_GIT_URL $EXTJS_GIT_TAG $EXTJS_TMP_DIR
-    mv $EXTJS_TMP_DIR $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/extjs
+    mv $EXTJS_TMP_DIR $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/extjs
 }
 
 install_d3() {
     D3_TMP_DIR=/tmp/d3
     _clone_from_git $D3_GIT_URL $D3_GIT_TAG $D3_TMP_DIR
-    mv $D3_TMP_DIR $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/d3
+    mv $D3_TMP_DIR $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/d3
 }
 
 install_jsroot() {
     JSROOT_TMP_DIR=/tmp/jsroot
     _clone_from_git $JSROOT_GIT_URL $JSROOT_GIT_TAG $JSROOT_TMP_DIR
-    mv $JSROOT_TMP_DIR $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/jsroot
+    mv $JSROOT_TMP_DIR $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/jsroot
 }
 
 ### Main script ###

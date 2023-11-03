@@ -111,6 +111,17 @@ This procedure has been tested on a RHEL8 Openstack VM.
   /data/srv/current/config/dqmgui/manage -f dev start "I did read documentation"
   ```
 
+5. Open firewall ports (if needed):
+
+  ```bash
+  firewall-cmd --list-all-zones
+  firewall-cmd --zone=public --add-port=8030/tcp # online    
+  firewall-cmd --zone=public --add-port=8060/tcp # dev
+  firewall-cmd --zone=public --add-port=8070/tcp # online/dev
+  firewall-cmd --zone=public --add-port=8080/tcp # offline
+  firewall-cmd --zone=public --add-port=8081/tcp # relval
+  ```
+
 ## [Debug] Selectively run parts of the installation script
 
 The script is split into steps (see: `installation_steps`), which can all be toggled off or on by arguments when running the script.

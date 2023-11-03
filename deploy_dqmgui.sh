@@ -20,7 +20,7 @@ set -ex
 ### Constants
 
 # The EUID of the authorized user to run the script.
-EUID_USER_DQM=1000
+EUID_USER_DQM=40454
 
 # Main directory we're installing into.
 INSTALLATION_DIR=/data/srv
@@ -69,7 +69,7 @@ JSROOT_GIT_TAG=5.1.0
 
 # Preliminary checks to do before installing the GUI
 preliminary_checks() {
-    # Make sure only the dqm user can run our script
+    # Make sure we don't have superuser privileges
     if [[ $EUID -eq 0 ]]; then
         echo "This script should not be run with superuser privileges!" 1>&2
         exit 1

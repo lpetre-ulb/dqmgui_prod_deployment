@@ -2,7 +2,7 @@
 
 This repository contains all the requirements for deploying the [Legacy] [DQMGUI](https://github.com/cms-DQM/dqmgui_prod) on a Red Hat Enterprise Linux 8 machine, with Python3.6 for the needs of moving DQM production to new machines.
 
-It aims to replace the existing one (`Deploy`), found in [`dmwm/deployment`](https://github.com/dmwm/deployment/tags), which only targets OS up to SLC7. The main difference is that the `Deploy` script relies on pre-built libraries and executables, found on `cmsrep.cern.ch`, while this script downloads and builds all requirements from source (hence takes longer to deploy).
+It aims to replace the existing one (`Deploy`), found in [`dmwm/deployment`](https://github.com/dmwm/deployment/tree/master/Deploy), which only targets OS up to SLC7. The main difference is that the `Deploy` script relies on pre-built libraries and executables, found on `cmsrep.cern.ch`, while this script downloads and builds all requirements from source (hence takes longer to deploy).
 
 > **Warning**
 > This deployment script should *not* be run as a sudo user.

@@ -137,5 +137,5 @@ bash deploy_dqm_online_el8.sh do_preliminary_checks=0 do_check_dependencies=0
 A useful combination that can be used when you've already downloaded all external dependencies once, and you want just to re-compile the DQMGUI part for testing:
 
 ```bash
-bash deploy_dqm_online_el8.sh do_preliminary_checks=0 do_check_dependencies=0 do_preliminary_checks=0 do_check_dependencies=0 do_create_directories=1 do_install_boost_gil=0 do_install_gil_numeric=0 do_install_rotoglup=0 do_install_classlib=0 do_install_dmwm=0 do_install_dqmgui=0 do_compile_dqmgui=1 do_install_yui=0 do_install_extjs=0 do_install_d3=0 do_install_jsroot=0
+bash deploy_dqm_online_el8.sh do_preliminary_checks=0 do_check_dependencies=0 do_preliminary_checks=0 do_check_dependencies=0 do_create_directories=1 do_install_boost_gil=0 do_install_gil_numeric=0 do_install_rotoglup=0 do_install_classlib=0 do_compile_classlib=0 do_install_dmwm=0 do_install_dqmgui=0 do_compile_dqmgui=1 do_install_yui=0 do_install_extjs=0 do_install_d3=0 do_install_jsroot=0
 ```

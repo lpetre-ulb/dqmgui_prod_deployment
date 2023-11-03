@@ -333,6 +333,7 @@ export MONITOR_ROOT=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv
 export DQMGUI_VERSION='$DQMGUI_GIT_TAG';
 # For pointing to the custom built libraries
 export LD_PRELOAD=\"$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/libDQMGUI.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/lib/libclasslib.so\"
+export LD_LIBRARY_PATH="$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/:$LD_LIBRARY_PATH"
 " >$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/profile.d/env.sh
 }
 
@@ -400,10 +401,7 @@ compile_dqmgui() {
     mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/
     mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp/libDQMGUI.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/libDQMGUI.so
 
-    if [ ! -L "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/lib/libDQMGUI.so" ]; then
-        ln -s $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/lib/libDQMGUI.so "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/lib/libDQMGUI.so"
-    fi
-
+    # Move the custom Boost.Python interface library to libs.
     mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp/Accelerator.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/cms/dqmgui/$DQMGUI_GIT_TAG/128/build/lib/Monitoring/DQM/Accelerator.so
 }
 

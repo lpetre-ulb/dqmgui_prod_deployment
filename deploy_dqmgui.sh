@@ -22,9 +22,6 @@ set -ex
 # The EUID of the authorized user to run the script.
 EUID_USER_DQM=1000
 
-# Default architecture. It doesn't really play a role now.
-# ARCHITECTURE=el8_amd64_gcc11
-
 # Main directory we're installing into.
 INSTALLATION_DIR=/data/srv
 
@@ -72,6 +69,12 @@ JSROOT_GIT_TAG=5.1.0
 
 # Preliminary checks to do before installing the GUI
 preliminary_checks() {
+    # Make sure only the dqm user can run our script
+    if [[ $EUID -eq 0 ]]; then
+        echo "This script should not be run with superuser privileges!" 1>&2
+        exit 1
+    fi
+
     # Make sure only the dqm user can run our script
     if [[ $EUID -ne $EUID_USER_DQM ]]; then
         echo "This script must be run as dqm" 1>&2

@@ -257,7 +257,7 @@ install_classlib() {
 
     # Apply code patches I found on cmsdist. The 7th one is ours, and has some extra needed fixes.
     cd $CLASSLIB_TMP_DIR/classlib-3.1.3
-    for i in 1 2 3 4 5 6 7; do
+    for i in 1 2 3 4 5 6 7 8; do
         patch -p1 <"$SCRIPT_DIR/classlib/patches/0${i}.patch"
     done
 

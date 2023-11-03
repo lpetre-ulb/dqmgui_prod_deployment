@@ -237,9 +237,9 @@ install_rotoglup() {
 }
 
 # Compilation step for classlib
-compile_classlib(){
+compile_classlib() {
     cd $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib-3.1.3
-    
+
     #INCLUDE_DIRS="$INCLUDE_DIRS:/usr/include/lzo" make -j `nproc`
     make -j "$(nproc)" CXXFLAGS="-Wno-error=extra -ansi -pedantic -W -Wall -Wno-long-long -Werror"
 
@@ -260,7 +260,7 @@ install_classlib() {
     for i in 1 2 3 4 5 6 7; do
         patch -p1 <"$SCRIPT_DIR/classlib/patches/0${i}.patch"
     done
-    
+
     # Run cmake to generate makefiles and others
     cmake .
 
@@ -270,20 +270,19 @@ install_classlib() {
     perl -p -i -e '
       s{-llzo2}{}g;
         !/^\S+: / && s{\S+LZO((C|Dec)ompressor|Constants|Error)\S+}{}g' \
-         $CLASSLIB_TMP_DIR/classlib-3.1.3/Makefile
+        $CLASSLIB_TMP_DIR/classlib-3.1.3/Makefile
 
-    if [ -d $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib-3.1.3 ];
-    then
-	rm -rf $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib-3.1.3
+    if [ -d $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib-3.1.3 ]; then
+        rm -rf $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib-3.1.3
     fi
 
     # Move the classlib files inside the installation dir, needed for compiling the GUI
     mv $CLASSLIB_TMP_DIR/classlib-3.1.3 $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/
-    
+
     # Make a link so that DQMGUI compilation can find the classlib headers easily
     ln -s $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib-3.1.3/classlib $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/$ARCHITECTURE/external/src/classlib
-    
-    rm -rf $CLASSLIB_TMP_DIR    
+
+    rm -rf $CLASSLIB_TMP_DIR
 }
 
 install_boost_gil() {

@@ -1,0 +1,42 @@
+name: Build DQMGUI Installation Package
+
+on: [push]
+
+jobs:
+  build_and_upload:
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download and compress dependencies
+        run: |
+          sudo apt update && sudo apt install -y libcurl4-gnutls-dev
+          $(which python3) --version
+          bash download_dependencies.sh
+          rm -rf .git
+          mkdir -p /tmp/dqmgui
+          tar -cf /tmp/dqmgui/dqmgui_installation_package.tar.gz . -I "gzip --best"
+      - name: Archive package artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dqmgui-installation-package
+          path: |
+            /tmp/dqmgui/dqmgui_installation_package.tar.gz
+      # Create a dummy release, so that the artifact is downloadable
+      # without a GitHub account
+      # This will automatically update the artifacts of the "latest" release,
+      # even though the "latest" tag does match with the actually latest commit.
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "/tmp/dqmgui/dqmgui_installation_package.tar.gz"
+          body:
+            "Automatically generated dummy release for making the installation
+            package publicly available. The `latest` tag is
+            put on a random commit, and does not reflect the current state of the release,
+            while the artifact of this release is updated with the actually latest files,
+            on each push."
+          tag: "latest"
+          allowUpdates: "true"

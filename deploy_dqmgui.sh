@@ -280,12 +280,15 @@ _create_python_venv() {
     python_exe=$(which python3)
 
     python_venv_dir=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv
+    if [ -d "$python_venv_dir" ]; then
+        rm -rf "$python_venv_dir"
+    fi
     mkdir -p "$python_venv_dir"
 
     # Extract the downloaded python packages
-    tar -xzf $SCRIPT_DIR/pypi/pypi.tar.gz -C /tmp
+    tar -xzf "$SCRIPT_DIR/pypi/pypi.tar.gz" -C /tmp
     echo -n "INFO: Creating virtual environment at $python_venv_dir"
-    $python_exe -m venv $python_venv_dir
+    $python_exe -m venv "$python_venv_dir"
 
     # Now use the new venv's python
     python_venv_exe=$python_venv_dir/bin/python

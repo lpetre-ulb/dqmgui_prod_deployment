@@ -127,10 +127,14 @@ create_directories() {
     mkdir -p $INSTALLATION_DIR/state/dqmgui
     declare -a necessary_dirs=("backup" "dev" "offline" "online" "relval")
     for subdir in "${necessary_dirs[@]}"; do
+        # State dirs
         dirname="$INSTALLATION_DIR/state/dqmgui/$subdir"
         echo "DEBUG: Creating subdirectory $dirname"
         mkdir -p "$dirname"
+        # Log dirs
         dirname="$INSTALLATION_DIR/logs/dqmgui/$subdir"
+        echo "DEBUG: Creating subdirectory $dirname"
+        mkdir -p "$dirname"
     done
 
     # Dirs to create under DMWM_GIT_TAG dir

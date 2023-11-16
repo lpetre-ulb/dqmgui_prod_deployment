@@ -8,4 +8,4 @@ TARGET_DIRECTORY="/tmp/dqmgui"
 ARCHIVE_NAME="dqmgui_installation_package.tar.gz"
 
 mkdir -p "$TARGET_DIRECTORY"
-tar -cf "$TARGET_DIRECTORY/$ARCHIVE_NAME" . -I "gzip --best" --exclude "./git" --exclude "./github"
+tar --exclude "./git" --exclude "./github" -cf "$TARGET_DIRECTORY/$ARCHIVE_NAME" . -I "gzip --best"

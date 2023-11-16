@@ -3,7 +3,15 @@
 # Script that downloads all online dependencies for [Legacy] DQMGUI
 # in order to install them at P5, where there is no access to neither GitHub,
 # nor PyPI. This script is to be called whenever those packages are to be recreated, e.g
+# new PyPI packages version, new DQMGUI repo version, new DMQM/deployment version.
 #
+# For every element in the repos_to_download array, the equivalent repo and tag/ref are
+# cloned and compressed under a directory of the same name.
+# All PyPI packages (see requirements.txt) are compressed together, under pip/.
+#
+# To change any of the package versions, edit config.sh
+#
+# Dependency: libcurl4-gnutls-dev for curl-config
 
 set -ex
 
@@ -81,12 +89,11 @@ download_repos() {
 }
 
 download_python_packages() {
-    declare -a pypi_requirements=(pip sphinx wheel cherrypy jsmin pycurl numpy matplotlib pillow Cheetah3 virtualenv)
     PIP_TEMP_DIR=/tmp/pip
     mkdir -p $PIP_TEMP_DIR
     mkdir -p "$SCRIPT_DIR/pypi"
     python_exe=$(which python3)
-    eval "$python_exe -m pip download ${pypi_requirements[*]} --destination-directory $PIP_TEMP_DIR"
+    eval "$python_exe -m pip download -r requirements.txt --destination-directory $PIP_TEMP_DIR"
     tar -cf "$SCRIPT_DIR/pypi/pypi.tar.gz" --directory=/tmp pip -I "gzip --best"
     rm -rf $PIP_TEMP_DIR
 }

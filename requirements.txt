@@ -1,0 +1,14 @@
+# A duplicate of DQMGUI's requirements.txt,
+# we could probably use the one inside the repo too,
+# but well.
+pip
+sphinx<8.0.0
+wheel
+cherrypy<19.0.0
+jsmin<4.0.0
+pycurl<8.0.0
+numpy<1.25.0
+matplotlib<3.8.0
+pillow<11.0.0
+Cheetah3<3.3.0
+virtualenv

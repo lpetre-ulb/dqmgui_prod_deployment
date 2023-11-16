@@ -72,7 +72,7 @@ preliminary_checks() {
 # Check for needed OS-wide dependencies
 check_dependencies() {
     pkgs_installed=1
-    declare -a required_packages=(unzip bzip2 libglvnd-opengl libX11-devel libXext-devel libXft-devel
+    declare -a required_packages=(patch unzip bzip2 libglvnd-opengl libX11-devel libXext-devel libXft-devel
         libXpm-devel mesa-libGLU mesa-libGLU-devel perl-Env perl-Switch
         perl-Thread-Queue glibc-headers libidn libXcursor
         libXi libXinerama libXrandr perl perl-Digest-MD5 tcsh zsh epel-release

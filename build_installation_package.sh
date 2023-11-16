@@ -21,4 +21,4 @@ for ARGUMENT in "$@"; do
 done
 
 mkdir -p "$TARGET_DIRECTORY"
-tar --exclude "./git" --exclude "./github" -cf "$TARGET_DIRECTORY/$ARCHIVE_NAME" "$SOURCE_DIRECTORY" -I "gzip --best"
+tar -cf "$TARGET_DIRECTORY/$ARCHIVE_NAME" --exclude "$SOURCE_DIRECTORY/.git" --exclude "$SOURCE_DIRECTORY/.github" "$SOURCE_DIRECTORY" -I "gzip --best"

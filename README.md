@@ -87,17 +87,28 @@ It aims to replace the existing one (`Deploy`), found in [`dmwm/deployment`](htt
 
 This procedure has been tested on a RHEL8 Openstack VM. Instructions below are primarily for a personal VM.
 
-0. Download the latest build artifact and copy it to the machine you want to install it to:
+0.
+
+  a. Download the latest build artifact and copy it to the machine you want to install it to:
+
+    ```bash
+    curl -L https://github.com/cms-DQM/dqmgui_prod_deployment/releases/download/latest/dqmgui_installation_package.tar.gz --output dqmgui_installation_package.tar.gz
+    scp dqmgui_installation_package.tar.gz root@<VM machine>:/tmp/
+    ```
+    OR
+
+  b. Download all the required files yourself:
 
   ```bash
-  curl -L https://github.com/cms-DQM/dqmgui_prod_deployment/releases/download/latest/dqmgui_installation_package.tar.gz --output dqmgui_installation_package.tar.gz
-  scp dqmgui_installation_package.tar.gz root@<VM machine>:/tmp/
+  # This will create a dqmgui_installation_package.tar.gz in /tmp
+  bash download_dependencies.sh && bash build_installation_package.sh
+  scp /tmp/dqmgui_installation_package.tar.gz root@<VM machine>:/tmp/
   ```
 
 1. Connect to the VM and install the system packages:
 
   ```bash
-  sudo yum install -y unzip bzip2 libglvnd-opengl libX11-devel libXext-devel libXft-devel libXpm-devel mesa-libGLU mesa-libGLU-devel perl-Env perl-Switch perl-Thread-Queue glibc-headers libidn libXcursor libXi libXinerama libXrandr perl perl-Digest-MD5 tcsh zsh epel-release libcurl-devel python38 python38-devel boost-python3-devel protobuf-devel jemalloc-devel pcre-devel boost-devel lzo-devel cmake xz-devel openssl-devel libjpeg-turbo-devel libpng-devel gcc-c++ gcc binutils gcc-gfortran mesa-libGL-devel mesa-libGLU-devel glew-devel ftgl-devel fftw-devel cfitsio-devel graphviz-devel libuuid-devel avahi-compat-libdns_sd-devel openldap-devel python3-numpy libxml2-devel gsl-devel readline-devel R-devel R-Rcpp-devel R-RInside-devel xrootd-client
+  sudo yum install -y patch unzip bzip2 libglvnd-opengl libX11-devel libXext-devel libXft-devel libXpm-devel mesa-libGLU mesa-libGLU-devel perl-Env perl-Switch perl-Thread-Queue glibc-headers libidn libXcursor libXi libXinerama libXrandr perl perl-Digest-MD5 tcsh zsh epel-release libcurl-devel python38 python38-devel boost-python3-devel protobuf-devel jemalloc-devel pcre-devel boost-devel lzo-devel cmake xz-devel openssl-devel libjpeg-turbo-devel libpng-devel gcc-c++ gcc binutils gcc-gfortran mesa-libGL-devel mesa-libGLU-devel glew-devel ftgl-devel fftw-devel cfitsio-devel graphviz-devel libuuid-devel avahi-compat-libdns_sd-devel openldap-devel python3-numpy libxml2-devel gsl-devel readline-devel R-devel R-Rcpp-devel R-RInside-devel xrootd-client
   ```
 
 2. Add a non-privileged user, create and give access to necessary directories and switch to it:

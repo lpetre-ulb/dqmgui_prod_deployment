@@ -91,11 +91,12 @@ This procedure has been tested on a RHEL8 Openstack VM. Instructions below are p
 
   a. Download the latest build artifact and copy it to the machine you want to install it to:
 
-    ```bash
-    curl -L https://github.com/cms-DQM/dqmgui_prod_deployment/releases/download/latest/dqmgui_installation_package.tar.gz --output dqmgui_installation_package.tar.gz
-    scp dqmgui_installation_package.tar.gz root@<VM machine>:/tmp/
-    ```
-    OR
+  ```bash
+  curl -L https://github.com/cms-DQM/dqmgui_prod_deployment/releases/download/latest/dqmgui_installation_package.tar.gz --output dqmgui_installation_package.tar.gz
+  scp dqmgui_installation_package.tar.gz root@<VM machine>:/tmp/
+  ```
+
+  OR
 
   b. Download all the required files yourself:
 

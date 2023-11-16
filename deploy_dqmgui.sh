@@ -395,12 +395,6 @@ install_dqmgui() {
     mv $DQMGUI_TMP_DIR "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128"
 
     mkdir -p "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/data"
-    mkdir -p "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/" # Needed for DQMGUI templates
-    if [ -d "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/templates" ]; then
-        rm -rf "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/templates"
-    fi
-
-    mv "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/templates" "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/templates"
 
     if [ ! -L "$INSTALLATION_DIR/$DMWM_GIT_TAG/apps/dqmgui" ]; then
         echo "DEBUG: Creating link $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG <-- $INSTALLATION_DIR/$DMWM_GIT_TAG/apps/dqmgui"
@@ -409,6 +403,13 @@ install_dqmgui() {
 
     # Create python venv for all python "binaries" and webserver
     _create_python_venv
+
+    mkdir -p "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/" # Needed for DQMGUI templates
+    if [ -d "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/templates" ]; then
+        rm -rf "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/templates"
+    fi
+
+    mv "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/templates" "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv/data/templates"
 
     # Create files needed by manage script for env variables
     _create_env_and_init_sh

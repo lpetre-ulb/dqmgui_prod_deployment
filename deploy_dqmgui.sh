@@ -466,7 +466,7 @@ compile_root() {
     fi
     mkdir -p $ROOT_TMP_BUILD_DIR
     cd $ROOT_TMP_BUILD_DIR
-    cmake -DCMAKE_INSTALL_PREFIX=$ROOT_INSTALLATION_DIR $ROOT_TMP_DIR -DPython3_ROOT_DIR=$(which python3)
+    cmake -DCMAKE_INSTALL_PREFIX=$ROOT_INSTALLATION_DIR $ROOT_TMP_DIR -DPython3_ROOT_DIR=$(which python3) -Dtesting=OFF -Dbuiltin_gtest=OFF
     cmake --build . --target install -j $(nproc)
     cd $INSTALLATION_DIR
     rm -rf $ROOT_TMP_DIR $ROOT_TMP_BUILD_DIR

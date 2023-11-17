@@ -87,20 +87,18 @@ It aims to replace the existing one (`Deploy`), found in [`dmwm/deployment`](htt
 
 This procedure has been tested on a RHEL8 Openstack VM. Instructions below are primarily for a personal VM.
 
-0.
-
-  a. Download the latest build artifact and copy it to the machine you want to install it to:
-
+0. Get the installation package to the machine you want to deploy to:
+  * Download the latest build artifact and copy it to the machine you want to install it to:
   ```bash
   curl -L https://github.com/cms-DQM/dqmgui_prod_deployment/releases/download/latest/dqmgui_installation_package.tar.gz --output dqmgui_installation_package.tar.gz
   scp dqmgui_installation_package.tar.gz root@<VM machine>:/tmp/
   ```
-
   OR
-
-  b. Download all the required files yourself:
-
+  * Download all the required files yourself (this is useful if you need specific versions of DMQM/deployment or DQMGUI, change them in `config.sh`):
   ```bash
+  git clone --depth 1 https://github.com/cms-DQM/dqmgui_prod_deployment && cd dqmgui_prod_deployment
+  # Now change config.sh as needed.
+
   # This will create a dqmgui_installation_package.tar.gz in /tmp
   bash download_dependencies.sh && bash build_installation_package.sh
   scp /tmp/dqmgui_installation_package.tar.gz root@<VM machine>:/tmp/

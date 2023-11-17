@@ -90,17 +90,51 @@ download_repo() {
 }
 
 download_python_packages() {
+    python_exe=$1
     PIP_TEMP_DIR=/tmp/pip
     mkdir -p $PIP_TEMP_DIR
     mkdir -p "$SCRIPT_DIR/pypi"
-    python_exe=$(which python3)
     eval "$python_exe -m pip download -r requirements.txt --destination-directory $PIP_TEMP_DIR"
     tar -cf "$SCRIPT_DIR/pypi/pypi.tar.gz" --directory=/tmp pip -I "pigz --best"
     rm -rf $PIP_TEMP_DIR
 }
 
+# Check the version of a specific python executable
+_check_python_version() {
+    python_exe=$1
+    python_version=$($python_exe -c 'import platform; print(platform.python_version())')
+    python_version_major="$(echo $python_version | cut -d'.' -f1)"
+    python_version_minor="$(echo $python_version | cut -d'.' -f2)"
+    if [ "$python_version_major.$python_version_minor" != "$PYTHON_VERSION" ]; then
+        return 1
+    fi
+    return 0
+}
+
+# Try to find a python version compatible with the one configured in config.sh
+find_compatible_python_version() {
+    required_python_version_major="$(echo $PYTHON_VERSION | cut -d'.' -f1)"
+    required_python_version_minor="$(echo $PYTHON_VERSION | cut -d'.' -f2)"
+    declare -a python_executables=(python3 "python${PYTHON_VERSION}" "python${required_python_version_major}${required_python_version_minor}")
+    for python_executable in "${python_executables[@]}"; do
+        if which "$python_executable" 2>&1 1>&/dev/null; then
+            if _check_python_version $(which "$python_executable"); then
+                echo $(which "$python_executable")
+            fi
+        fi
+    done
+    echo
+}
 ### Main script
 
+# Check for python version, just to be sure
+python_exe=$(find_compatible_python_version)
+if [ -z "$python_exe" ]; then
+    echo "No python $PYTHON_VERSION was found on the system"
+    exit 1
+else
+    echo "Using python $python_exe"
+fi
 # For GitHub repos, clone the source on a specific branch/tag/ref, then make a tar.
 declare -a repos_to_download=(rotoglup boost_gil dmwm dqmgui yui extjs d3 jsroot root)
 
@@ -126,6 +160,6 @@ for repo in "${repos_to_download[@]}"; do
     download_repo "$repo" &
 done
 
-download_python_packages
+download_python_packages "$python_exe"
 wait
 echo "INFO: Done!"

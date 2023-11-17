@@ -11,30 +11,43 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Download and compress dependencies
+        env:
+          DMWM_GIT_URL: ${{ vars.DMWM_GIT_URL }}
+          DMWM_GIT_TAG: ${{ vars.DMWM_GIT_TAG }}
+          DQMGUI_GIT_URL: ${{ vars.DQMGUI_GIT_URL }}
+          DQMGUI_GIT_TAG: ${{ vars.DQMGUI_GIT_TAG }}
+          ROOT_GIT_URL: ${{ vars.ROOT_GIT_URL }}
+          ROOT_GIT_TAG: ${{ vars.ROOT_GIT_TAG }}
         run: |
           sudo apt update && sudo apt install -y libcurl4-gnutls-dev
           $(which python3) --version
-          bash download_dependencies.sh
+          bash download_dependencies.sh DMWM_GIT_TAG=$DMWM_GIT_TAG DMWM_GIT_URL=$DMWM_GIT_URL DQMGUI_GIT_TAG=$DQMGUI_GIT_TAG ROOT_GIT_URL=$ROOT_GIT_URL ROOT_GIT_TAG=$ROOT_GIT_TAG
           bash build_installation_package.sh
+          echo "Automatically generated release for making the installation
+          package publicly available.
+
+          Used:
+
+          * dmwm/deployment=${DMWM_GIT_URL}/tree/${DMWM_GIT_TAG}
+
+          * DQMGUI=${DQMGUI_GIT_URL}/tree/${DQMGUI_GIT_TAG}
+
+          * ROOT=${ROOT_GIT_URL}/tree/${ROOT_GIT_TAG}
+
+          " >> /tmp/release_body.md
+          echo "RELEASE_TAG=deployment_${DMWM_GIT_TAG}_dqmgui_${DQMGUI_GIT_TAG}_root_${ROOT_GIT_TAG}" >> $GITHUB_ENV
       - name: Archive package artifact
         uses: actions/upload-artifact@v3
         with:
           name: dqmgui-installation-package
           path: |
             /tmp/dqmgui/dqmgui_installation_package.tar.gz
-      # Create a dummy release, so that the artifact is downloadable
-      # without a GitHub account
-      # This will automatically update the artifacts of the "latest" release,
-      # even though the "latest" tag does match with the actually latest commit.
+      # Create a release based on the tags used, so that the artifact is downloadable
+      # without a GitHub account.
       - name: Release
         uses: ncipollo/release-action@v1
         with:
           artifacts: "/tmp/dqmgui/dqmgui_installation_package.tar.gz"
-          body:
-            "Automatically generated dummy release for making the installation
-            package publicly available. The `latest` tag is
-            put on a random commit, and does not reflect the current state of the release,
-            while the artifact of this release is updated with the actually latest files,
-            on each push."
-          tag: "latest"
+          bodyFile: "/tmp/release_body.md"
+          tag: ${{ env.RELEASE_TAG }}
           allowUpdates: "true"

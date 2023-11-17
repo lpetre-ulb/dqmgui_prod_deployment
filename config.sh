@@ -7,7 +7,7 @@
 # Target python version. This is important for downloading
 # compatible packages for PyPI. Make sure it's the same
 # with the python version that is running on the target machine.
-PYTHON_VERSION=3.11
+PYTHON_VERSION=3.8
 
 # Tag to use for getting the layouts and manage/deploy scripts
 # See: https://github.com/dmwm/deployment/tags

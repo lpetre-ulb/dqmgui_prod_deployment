@@ -95,6 +95,8 @@ This procedure has been tested on a RHEL8 Openstack VM. Instructions below are p
   ```
   OR
   * Download all the required files yourself (this is useful if you need specific versions of DMQM/deployment or DQMGUI, change them in `config.sh`):
+  > **Warning**
+  > You will need to have the same python version with the machine you will be installing to! Configure that in `config.sh`, with the `PYTHON_VERSION` variable.
   ```bash
   git clone --depth 1 https://github.com/cms-DQM/dqmgui_prod_deployment && cd dqmgui_prod_deployment
   # Now change config.sh as needed.

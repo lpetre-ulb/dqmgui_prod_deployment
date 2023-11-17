@@ -40,52 +40,53 @@ _clone_from_git() {
     if [[ -d $dir ]]; then
         rm -rf "$dir"
     fi
+    # Try to checkout to ref directly, else just get a shallow clone and try to find the ref there
+    git clone --depth 1 --branch "$ref" "$url" "$dir" || (
+        (git clone --depth 1 "$url" "$dir" &&
+            cd "$dir" &&
+            git remote set-branches origin '*' &&
+            git fetch --all --tags &&
+            git checkout "$ref" &&
+            cd -) || (
+            cd "$dir" &&
+                # If shallow clone fails, get last 100 commits
+                git fetch --all --depth=100 &&
+                git checkout "$ref" &&
+                cd -
+        )
+    )
 
-    # Shallow clone. We don't use --branch as we may need this to work
-    # for a specific commit, too.
-    git clone "$url" "$dir" --depth 1
-
-    # Checkout to ref.
-    cd "$dir"
-    # Shallow clone misses remote branches, so
-    # fix that.
-    git remote set-branches origin '*'
-    git fetch --all --tags
-    git fetch --depth=1
-    # DIRTY HACK
-    git checkout "$ref" || (git fetch --all --depth=50 && git checkout "$ref")
-    cd -
 }
 
-download_repos() {
-    for repo in "${repos_to_download[@]}"; do
-        download_repo_flag_name=do_download_$repo
-        if [ "${!download_repo_flag_name}" -eq 0 ]; then
-            echo "INFO: Skipping downloading $repo"
-            continue
-        fi
+download_repo() {
+    set -x
+    repo=$1
+    download_repo_flag_name=do_download_$repo
+    if [ "${!download_repo_flag_name}" -eq 0 ]; then
+        echo "INFO: Skipping downloading $repo"
+        return
+    fi
 
-        echo "INFO: Downloading $repo"
+    echo "INFO: Downloading $repo"
 
-        prefix="$(echo $repo | tr '[:lower:]' '[:upper:]')"
-        git_url=${prefix}_GIT_URL
-        git_tag=${prefix}_GIT_TAG
-        if [ -z "${!git_url}" ] || [ -z "${!git_tag}" ]; then
-            echo "WARNING: git url or tag not configured for repository $repo, skipping"
-            continue
-        fi
+    prefix="$(echo $repo | tr '[:lower:]' '[:upper:]')"
+    git_url=${prefix}_GIT_URL
+    git_tag=${prefix}_GIT_TAG
+    if [ -z "${!git_url}" ] || [ -z "${!git_tag}" ]; then
+        echo "WARNING: git url or tag not configured for repository $repo, skipping"
+        return
+    fi
 
-        temp_dir=/tmp/$repo
-        mkdir -p "$temp_dir"
-        _clone_from_git ${!git_url} ${!git_tag} $temp_dir
-        rm -rf "$temp_dir/.git" # Not needed, and will slow things down
-        mkdir -p "$SCRIPT_DIR/$repo"
-        if [ -f "$SCRIPT_DIR/$repo/$repo.tar.gz" ]; then
-            rm "$SCRIPT_DIR/$repo/$repo.tar.gz"
-        fi
-        tar -cf "$SCRIPT_DIR/$repo/$repo.tar.gz" --directory=/tmp "$repo" -I "gzip --best"
-        rm -rf "$temp_dir"
-    done
+    temp_dir=/tmp/$repo
+    mkdir -p "$temp_dir"
+    _clone_from_git "${!git_url}" "${!git_tag}" "$temp_dir"
+    rm -rf "$temp_dir/.git" # Remove .git, it will slow things down
+    mkdir -p "$SCRIPT_DIR/$repo"
+    if [ -f "$SCRIPT_DIR/$repo/$repo.tar.gz" ]; then
+        rm "$SCRIPT_DIR/$repo/$repo.tar.gz"
+    fi
+    tar -cf "$SCRIPT_DIR/$repo/$repo.tar.gz" --directory=/tmp "$repo" -I "gzip --best"
+    rm -rf "$temp_dir"
 }
 
 download_python_packages() {
@@ -120,7 +121,11 @@ for ARGUMENT in "$@"; do
     eval "$KEY=$VALUE"
 done
 
-download_repos
-download_python_packages
+# Download all repos in parallel
+for repo in "${repos_to_download[@]}"; do
+    download_repo "$repo" &
+done
 
+download_python_packages
+wait
 echo "INFO: Done!"

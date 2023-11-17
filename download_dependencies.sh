@@ -85,7 +85,7 @@ download_repo() {
     if [ -f "$SCRIPT_DIR/$repo/$repo.tar.gz" ]; then
         rm "$SCRIPT_DIR/$repo/$repo.tar.gz"
     fi
-    tar -cf "$SCRIPT_DIR/$repo/$repo.tar.gz" --directory=/tmp "$repo" -I "gzip --best"
+    tar -cf "$SCRIPT_DIR/$repo/$repo.tar.gz" --directory=/tmp "$repo" -I "pigz --best"
     rm -rf "$temp_dir"
 }
 
@@ -95,7 +95,7 @@ download_python_packages() {
     mkdir -p "$SCRIPT_DIR/pypi"
     python_exe=$(which python3)
     eval "$python_exe -m pip download -r requirements.txt --destination-directory $PIP_TEMP_DIR"
-    tar -cf "$SCRIPT_DIR/pypi/pypi.tar.gz" --directory=/tmp pip -I "gzip --best"
+    tar -cf "$SCRIPT_DIR/pypi/pypi.tar.gz" --directory=/tmp pip -I "pigz --best"
     rm -rf $PIP_TEMP_DIR
 }
 

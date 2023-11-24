@@ -112,6 +112,31 @@ check_dependencies() {
 
 }
 
+# Remove existing DQMGUI cronjobs
+clean_crontab() {
+    # Filter cronjobs starting in $INSTALLATION_DIR/current/dqmgui and
+    # replace crontabs
+    crontab -l 2>/dev/null | grep -v "$INSTALLATION_DIR/current/dqmgui" | crontab -
+}
+
+# Install DQMGUI cronjobs
+install_crontab() {
+    (
+        crontab -l # Get existing crontabs
+        echo "17 2 * * * $INSTALLATION_DIR/current/config/dqmgui/daily"
+        echo "@reboot $INSTALLATION_DIR/current/config/dqmgui/manage sysboot"
+    ) | crontab -
+}
+
+# TODO: Clean acrontabs for Offline GUI
+clean_acrontab() {
+    : # Not implemented yet
+}
+
+# TODO: Install acrontabs for Offline GUI
+install_acrontab() {
+    : # Not implemented yet
+}
 # Create necessary directories for installation
 create_directories() {
     # Dirs to create under INSTALLATION_DIR
@@ -493,7 +518,11 @@ declare -a installation_steps=(preliminary_checks
     install_yui
     install_extjs
     install_d3
-    install_jsroot)
+    install_jsroot
+    clean_crontab
+    install_crontab
+    clean_acrontab
+    install_acrontab)
 
 # Create dynamic flags to selectively disable/enable steps of the installation
 # Those flags are named "do_" with the name of the function, e.g. "do_install_yui" for

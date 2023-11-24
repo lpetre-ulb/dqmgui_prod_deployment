@@ -64,7 +64,7 @@ preliminary_checks() {
 
     # Stop GUI if already running
     if [ -f $INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui/manage ]; then
-        $INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui/manage stop
+        $INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui/manage stop 'I did read documentation'
     fi
 
     # Delete installation (config & sw, does not delete state)

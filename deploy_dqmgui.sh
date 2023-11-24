@@ -62,7 +62,13 @@ preliminary_checks() {
         ;;
     esac
 
-    if [[ -d $INSTALLATION_DIR/$DMWM_GIT_TAG ]]; then
+    # Stop GUI if already running
+    if [ -f $INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui/manage ]; then
+        $INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui/manage stop
+    fi
+
+    # Delete installation (config & sw, does not delete state)
+    if [ -d $INSTALLATION_DIR/$DMWM_GIT_TAG ]; then
         echo "WARNING: $INSTALLATION_DIR/$DMWM_GIT_TAG exists, deleting contents"
         rm -rf $INSTALLATION_DIR/$DMWM_GIT_TAG/*
     fi
@@ -398,6 +404,9 @@ compile_dqmgui() {
 
     # Move the custom Boost.Python interface library to libs.
     mv $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/src/cpp/Accelerator.so $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/build/lib/Monitoring/DQM/Accelerator.so
+
+    # Compiles layouts etc.
+    $INSTALLATION_DIR/current/config/dqmgui/manage compile
 }
 
 # Installation procedure of the DQMGUI repository.
@@ -442,6 +451,8 @@ install_dqmgui() {
     # Dynamic parametrization of the makefile, i.e. paths required
     # during the compilation procedure.
     _create_makefile_ext
+
+    # TODO: find more info on blacklist.txt file
 }
 
 # Javascript library

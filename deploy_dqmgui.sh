@@ -293,7 +293,7 @@ _create_logrotate_conf() {
 
 $INSTALLATION_DIR/state/dqmgui/*/logs/*.log {
     compress
-    rotate 30
+    rotate -1
     daily
     noolddir
     nomail

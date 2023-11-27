@@ -131,6 +131,7 @@ install_crontab() {
         crontab -l # Get existing crontabs
         echo "17 2 * * * $INSTALLATION_DIR/current/config/dqmgui/daily"
         echo "@reboot $INSTALLATION_DIR/current/config/dqmgui/manage sysboot"
+        echo "0 3 * * * logrotate $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/logrotate.conf"
     ) | crontab -
 }
 
@@ -283,6 +284,21 @@ install_dmwm() {
     mv "$DMWM_TMP_DIR/dqmgui" "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/"
 
     rm -rf $DMWM_TMP_DIR
+}
+
+# Create a configuration file for logrotate to manage...(surprise!) rotating logs.
+_create_logrotate_conf() {
+    echo "# DQMGUI logrotate configuration file
+# Automagically generated, please do not edit.
+
+$INSTALLATION_DIR/state/dqmgui/*/logs/*.log {
+    compress
+    rotate 30
+    daily
+    noolddir
+    nomail
+}
+" >"$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/logrotate.conf"
 }
 
 # env.sh and init.sh file creation. They're needed by other scripts (e.g. manage).
@@ -452,6 +468,7 @@ install_dqmgui() {
     # during the compilation procedure.
     _create_makefile_ext
 
+    _create_logrotate_conf
     # TODO: find more info on blacklist.txt file
 }
 

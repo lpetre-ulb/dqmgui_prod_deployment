@@ -131,7 +131,7 @@ install_crontab() {
         crontab -l # Get existing crontabs
         echo "17 2 * * * $INSTALLATION_DIR/current/config/dqmgui/daily"
         echo "@reboot $INSTALLATION_DIR/current/config/dqmgui/manage sysboot"
-        echo "0 3 * * * logrotate $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/logrotate.conf"
+        echo "0 3 * * * logrotate $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/logrotate.conf --state $INSTALLATION_DIR/state/logrotate.state"
     ) | crontab -
 }
 
@@ -291,7 +291,7 @@ _create_logrotate_conf() {
     echo "# DQMGUI logrotate configuration file
 # Automagically generated, please do not edit.
 
-$INSTALLATION_DIR/state/dqmgui/*/logs/*.log {
+$INSTALLATION_DIR/logs/dqmgui/*/*.log {
     compress
     rotate -1
     daily

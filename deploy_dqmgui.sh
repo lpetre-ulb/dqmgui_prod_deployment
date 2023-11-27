@@ -122,7 +122,7 @@ check_dependencies() {
 clean_crontab() {
     # Filter cronjobs starting in $INSTALLATION_DIR/current/dqmgui and
     # replace crontabs
-    crontab -l 2>/dev/null | grep -v "$INSTALLATION_DIR/current/dqmgui" | crontab -
+    crontab -l 2>/dev/null | grep -v "$INSTALLATION_DIR/current/config/dqmgui" | crontab -
 }
 
 # Install DQMGUI cronjobs

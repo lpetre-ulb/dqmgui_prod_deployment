@@ -58,7 +58,7 @@ _clone_from_git() {
 
 }
 
-download_repo() {
+download_and_compress_repo() {
     set -x
     repo=$1
     download_repo_flag_name=do_download_$repo
@@ -120,11 +120,13 @@ find_compatible_python_version() {
         if which "$python_executable" 2>&1 1>&/dev/null; then
             if _check_python_version $(which "$python_executable"); then
                 echo $(which "$python_executable")
+                return 0
             fi
         fi
     done
     echo
 }
+
 ### Main script
 
 # Check for python version, just to be sure
@@ -135,6 +137,7 @@ if [ -z "$python_exe" ]; then
 else
     echo "Using python $python_exe"
 fi
+
 # For GitHub repos, clone the source on a specific branch/tag/ref, then make a tar.
 declare -a repos_to_download=(rotoglup boost_gil dmwm dqmgui yui extjs d3 jsroot root)
 
@@ -156,10 +159,30 @@ for ARGUMENT in "$@"; do
 done
 
 # Download all repos in parallel
+declare -a backround_pids=()
+declare -a repos_failed_to_download=()
 for repo in "${repos_to_download[@]}"; do
-    download_repo "$repo" &
+    download_and_compress_repo "$repo" &
+    backround_pids+=("$!") # Keep the PID of the process to monitor it
 done
 
 download_python_packages "$python_exe"
-wait
+
+# Wait for bacgkround tasks to complete
+for i in "${!backround_pids[@]}"; do
+    # Try to find the pid in the currently running processes
+    while ps -p "${backround_pids[i]}" | tail -1 | grep "${backround_pids[i]}"; do
+        sleep 1
+    done
+    # Process stopped, check for on-zero exit code
+    if ! wait "${backround_pids[i]}"; then
+        repos_failed_to_download+=("${repos_to_download[i]}")
+    fi
+done
+
+if [ "${#repos_failed_to_download[*]}" -gt 0 ]; then
+    echo "Failed to download the following repos: ${repos_failed_to_download[*]}"
+    exit 1
+fi
+
 echo "INFO: Done!"

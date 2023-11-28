@@ -27,7 +27,7 @@ EUID_USER_DQM=40454
 INSTALLATION_DIR=/data/srv
 
 # Where ROOT will be installed
-ROOT_INSTALLATION_DIR=/data/srv/root
+ROOT_INSTALLATION_DIR=$INSTALLATION_DIR/root
 
 # This scipt's directory
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)

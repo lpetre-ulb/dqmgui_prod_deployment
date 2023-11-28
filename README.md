@@ -131,13 +131,15 @@ The installation package is created by running `download_dependencies.sh`. This 
 
 ## FAQ
 
-### How do I create a new installation package, using new versions of specific packages?
+### Releases and Installation packages
+
+#### How do I create a new installation package, using new versions of specific packages?
 
 1. Go to [Actions secrets and variables](https://github.com/cms-DQM/dqmgui_prod_deployment/settings/variables/actions).
 2. Edit the `Repository variables` to reflect the versions of the packages you want to include in the release. For example, if you want to use DQMGUI [`9.8.0`](https://github.com/cms-DQM/dqmgui_prod/releases/tag/9.8.0), change `DQMGUI_GIT_TAG` to `9.8.0`.
 3. Trigger the `build_installation_package` action [here](https://github.com/cms-DQM/dqmgui_prod_deployment/actions/workflows/build_installation_package.yaml): Click the topmost row of the "workflow runs" table, and in the new page that opens, click `Re-run all jobs`.
 
-### When do I need to re-trigger the GitHub actions of this repository?
+#### When do I need to re-trigger the GitHub actions of this repository?
 
 Two cases:
 
@@ -146,3 +148,9 @@ DQMGUI, or DMWM's deployment.
 
 2. You want to update an *existing* release (less common, probably for debugging reasons): The release you are
 looking for exists, but some of the packages downloaded in this release have been updated, using the same tag/reference/branch name. For example, if you want to include a development branch of DQMGUI (e.g. `dev`), the DQMGUI `dev` branch may be updated, but the installation package that has been created cloned an older version of the `dev` branch.
+
+### Installation
+
+#### Is it needed to recompile ROOT every time I install DQMGUI?
+
+No. In principle (assuming that you don't change ROOT version between releases) you only need to compile ROOT once. However, should you want to change ROOT versions between releases or just force a recompilation anyway (guaranteed fun for the whole family), you can do it by deleting the file `<Installation dir>/root/bin/thisroot.sh` (default: `/data/srv/root/bin/thisroot.sh`).

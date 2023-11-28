@@ -304,6 +304,7 @@ $INSTALLATION_DIR/logs/dqmgui/*/*.log {
     maxage 365
     noolddir
     nomail
+    dateext
 }
 " >"$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/logrotate.conf"
 }

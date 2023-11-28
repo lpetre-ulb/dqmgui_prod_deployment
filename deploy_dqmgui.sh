@@ -122,7 +122,7 @@ check_dependencies() {
 clean_crontab() {
     # Filter cronjobs starting in $INSTALLATION_DIR/current/dqmgui and
     # replace crontabs
-    crontab -l 2>/dev/null | grep -v "$INSTALLATION_DIR/current/config/dqmgui" | crontab -
+    crontab -l 2>/dev/null | grep -v "$INSTALLATION_DIR/current/config/dqmgui" | grep -vE "$INSTALLATION_DIR/current.+logrotate.conf" | crontab -
 }
 
 # Install DQMGUI cronjobs
@@ -131,7 +131,7 @@ install_crontab() {
         crontab -l # Get existing crontabs
         echo "17 2 * * * $INSTALLATION_DIR/current/config/dqmgui/daily"
         echo "@reboot $INSTALLATION_DIR/current/config/dqmgui/manage sysboot"
-        echo "0 3 * * * logrotate $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/logrotate.conf --state $INSTALLATION_DIR/state/logrotate.state"
+        echo "0 3 * * * logrotate $INSTALLATION_DIR/current/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/logrotate.conf --state $INSTALLATION_DIR/state/logrotate.state"
     ) | crontab -
 }
 
@@ -291,10 +291,15 @@ _create_logrotate_conf() {
     echo "# DQMGUI logrotate configuration file
 # Automagically generated, please do not edit.
 
+# Make daily compressed rotations in the same directory, keep up to
+# 1 year of logs. Do not remove the rotated logs, instead copy the
+# contents and truncate them to 0.
 $INSTALLATION_DIR/logs/dqmgui/*/*.log {
-    compress
-    rotate -1
     daily
+    compress
+    copytruncate
+    rotate 365
+    maxage 365
     noolddir
     nomail
 }

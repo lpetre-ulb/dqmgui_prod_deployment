@@ -9,7 +9,7 @@ It aims to replace the existing one (`Deploy`), found in [`dmwm/deployment`](htt
 1. Download all the external resources needed (e.g. python packages from PyPI, github repositories) and compress them. This is done automatically with GitHub actions, and you can download a package ready to install [here](https://github.com/cms-DQM/dqmgui_prod_deployment/actions/workflows/build_installation_package.yaml).
 2. Copy the archives to the P5 machine and extract, then build from source (hence takes longer to deploy).
 
-> **Warning**
+> [!WARNING]
 > This deployment script should *not* be run as a sudo user.
 
 ## Requirements
@@ -18,70 +18,7 @@ It aims to replace the existing one (`Deploy`), found in [`dmwm/deployment`](htt
 - `sudo` permissions:
   - To install the system-wide packages (listed below).
 - Python 3.8
-- Several system packages, installed via `yum`:
-  <details>
-  <summary>Package list</summary>
-
-  - unzip
-  - bzip2
-  - libglvnd-opengl
-  - libX11-devel
-  - libXext-devel
-  - libXft-devel
-  - libXpm-devel
-  - mesa-libGLU
-  - mesa-libGLU-devel
-  - perl-Env
-  - perl-Switch
-  - perl-Thread-Queue
-  - glibc-headers
-  - libidn
-  - libXcursor
-  - libXi
-  - libXinerama
-  - libXrandr
-  - perl
-  - perl-Digest-MD5
-  - tcsh
-  - zsh
-  - epel-release
-  - libcurl-devel
-  - python38
-  - python38-devel
-  - boost-python3-devel
-  - protobuf-devel
-  - jemalloc-devel
-  - pcre-devel
-  - boost-devel
-  - lzo-devel
-  - cmake
-  - xz-devel
-  - openssl-devel
-  - libjpeg-turbo-devel
-  - libpng-devel
-  - gcc-c++
-  - gcc
-  - binutils
-  - gcc-gfortran
-  - mesa-libGL-devel
-  - mesa-libGLU-devel
-  - glew-devel
-  - ftgl-devel
-  - fftw-devel
-  - cfitsio-devel
-  - graphviz-devel
-  - libuuid-devel
-  - avahi-compat-libdns_sd-devel
-  - openldap-devel
-  - python3-numpy
-  - libxml2-devel
-  - gsl-devel
-  - readline-devel
-  - R-devel
-  - R-Rcpp-devel
-  - R-RInside-devel
-  - xrootd-client
-  </details>
+- Several system packages, installed via `yum` (see below).
 
 ## Deploying [Legacy] DQMGUI
 
@@ -95,7 +32,7 @@ This procedure has been tested on a RHEL8 Openstack VM. Instructions below are p
   ```
   OR
   * Download all the required files yourself (this is useful if you need specific versions of DMQM/deployment or DQMGUI, change them in `config.sh`):
-  > **Warning**
+  > [!WARNING]
   > You will need to have the same python version with the machine you will be installing to! Configure that in `config.sh`, with the `PYTHON_VERSION` variable.
   ```bash
   git clone --depth 1 https://github.com/cms-DQM/dqmgui_prod_deployment && cd dqmgui_prod_deployment
@@ -182,7 +119,7 @@ bash deploy_dqmgui.sh do_preliminary_checks=0 do_check_dependencies=0
 A useful combination that can be used when you've already installed and built all steps once, but you only want to re-compile the DQMGUI part for testing:
 
 ```bash
-bash deploy_dqmgui.sh do_preliminary_checks=0 do_check_dependencies=0 do_create_directories=1 do_install_boost_gil=0 do_install_gil_numeric=0 do_install_rotoglup=0 do_install_classlib=0 do_compile_classlib=0 do_install_dmwm=0 do_install_root=0 do_compile_root=0 do_install_dqmgui=0 do_compile_dqmgui=1 do_install_yui=0 do_install_extjs=0 do_install_d3=0 do_install_jsroot=0
+bash deploy_dqmgui.sh do_preliminary_checks=0 do_check_dependencies=0 do_create_directories=1 do_install_boost_gil=0 do_install_gil_numeric=0 do_install_rotoglup=0 do_install_classlib=0 do_compile_classlib=0 do_install_dmwm=0 do_install_root=0 do_compile_root=0 do_install_dqmgui=0 do_compile_dqmgui=1 do_install_yui=0 do_install_extjs=0 do_install_d3=0 do_install_jsroot=0 do_clean_crontab=0 do_install_crontab=0
 ```
 
 ## Download script

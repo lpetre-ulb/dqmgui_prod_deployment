@@ -127,6 +127,8 @@ clean_crontab() {
 
 # Install DQMGUI cronjobs
 install_crontab() {
+    _create_logrotate_conf
+
     (
         crontab -l # Get existing crontabs
         echo "17 2 * * * $INSTALLATION_DIR/current/config/dqmgui/daily"
@@ -473,7 +475,6 @@ install_dqmgui() {
     # during the compilation procedure.
     _create_makefile_ext
 
-    _create_logrotate_conf
     # TODO: find more info on blacklist.txt file
 }
 

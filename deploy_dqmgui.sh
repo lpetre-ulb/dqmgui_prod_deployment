@@ -294,7 +294,7 @@ _create_logrotate_conf() {
 # Automagically generated, please do not edit.
 
 # Make daily compressed rotations in the same directory, keep up to
-# 1 year of logs. Do not remove the rotated logs, instead copy the
+# 1 year of logs. Dooes not remove the rotated logs, instead copy the
 # contents and truncate them to 0.
 $INSTALLATION_DIR/logs/dqmgui/*/*.log {
     daily

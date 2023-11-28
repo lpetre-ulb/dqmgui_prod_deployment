@@ -26,7 +26,7 @@ This procedure has been tested on a RHEL8 Openstack VM. Instructions below are p
 0. Get the installation package to the machine you want to deploy to:
   * Download the latest build artifact and copy it to the machine you want to install it to:
   ```bash
-  curl -L https://github.com/cms-DQM/dqmgui_prod_deployment/releases/download/latest/dqmgui_installation_package.tar.gz --output dqmgui_installation_package.tar.gz
+  curl -L https://github.com/cms-DQM/dqmgui_prod_deployment/releases/download/deployment_debug_dqmgui_python3_backup_root_v6-28-08/dqmgui_installation_package.tar.gz --output dqmgui_installation_package.tar.gz
   scp dqmgui_installation_package.tar.gz root@<VM machine>:/tmp/
   ```
   OR

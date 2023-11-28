@@ -18,7 +18,6 @@ It aims to replace the existing one (`Deploy`), found in [`dmwm/deployment`](htt
 - `sudo` permissions:
   - To install the system-wide packages (listed below).
 - Python 3.8
-- Several system packages, installed via `yum` (see below).
 
 ## Deploying [Legacy] DQMGUI
 

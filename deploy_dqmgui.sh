@@ -289,8 +289,8 @@ install_dmwm() {
     mkdir -p $DMWM_TMP_DIR
     tar -xzf "$SCRIPT_DIR/dmwm/dmwm.tar.gz" -C /tmp
     # Move dqmgui-related scripts from DMWM to the config folder
-    rm -rf "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/" # Cleanup dir if exists
-    mv "$DMWM_TMP_DIR/dqmgui" "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/"
+    rm -rf "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui" # Cleanup dir if exists
+    mv "$DMWM_TMP_DIR/dqmgui" "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui"
     rm -rf $DMWM_TMP_DIR
 }
 

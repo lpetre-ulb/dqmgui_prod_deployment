@@ -63,7 +63,8 @@ preliminary_checks() {
     esac
 
     # Stop GUI if already running
-    if [ -f $INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui/manage ]; then
+    if [ -f "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui/manage" ] &&
+        [ -f "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/profile.d/env.sh" ]; then
         $INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui/manage stop 'I did read documentation'
     fi
 

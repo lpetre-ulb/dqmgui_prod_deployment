@@ -23,16 +23,19 @@ jobs:
           $(which python3) --version
           bash download_dependencies.sh DMWM_GIT_TAG=$DMWM_GIT_TAG DMWM_GIT_URL=$DMWM_GIT_URL DQMGUI_GIT_TAG=$DQMGUI_GIT_TAG ROOT_GIT_URL=$ROOT_GIT_URL ROOT_GIT_TAG=$ROOT_GIT_TAG
           bash build_installation_package.sh
-          echo "Automatically generated release for making the installation
-          package publicly available.
+          echo "Automatically generated release for making the installation package publicly available.
 
-          Used:
+          The release name currently follows the convention:
 
-          * dmwm/deployment=${DMWM_GIT_URL}/tree/${DMWM_GIT_TAG}
+          deployment\_\`DMWM_GIT_TAG\`\_dqmgui\_\`DQMGUI_GIT_TAG\`\_root\_\`ROOT_GIT_TAG\`
 
-          * DQMGUI=${DQMGUI_GIT_URL}/tree/${DQMGUI_GIT_TAG}
+          Used repositories:
 
-          * ROOT=${ROOT_GIT_URL}/tree/${ROOT_GIT_TAG}
+          * dmwm/deployment ([${DMWM_GIT_TAG}](${DMWM_GIT_URL}/tree/${DMWM_GIT_TAG}))
+
+          * DQMGUI ([${DQMGUI_GIT_TAG}](${DQMGUI_GIT_URL}/tree/${DQMGUI_GIT_TAG}))
+
+          * ROOT ([${ROOT_GIT_TAG}](${ROOT_GIT_URL}/tree/${ROOT_GIT_TAG}))
 
           " >> /tmp/release_body.md
           echo "RELEASE_TAG=deployment_${DMWM_GIT_TAG}_dqmgui_${DQMGUI_GIT_TAG}_root_${ROOT_GIT_TAG}" >> $GITHUB_ENV

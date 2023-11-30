@@ -211,7 +211,8 @@ install_rotoglup() {
     cd $ROTOGLUP_TMP_DIR
     #patch -p1 < $SCRIPT_DIR/rotoglup/patches/01.patch
     patch -p1 <"$SCRIPT_DIR/rotoglup/patches/02.patch"
-    mv $ROTOGLUP_TMP_DIR/rtgu $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/rtgu
+    rm -rf "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/rtgu"
+    mv $ROTOGLUP_TMP_DIR/rtgu "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/rtgu"
     cd $INSTALLATION_DIR/
     rm -rf $ROTOGLUP_TMP_DIR
 }
@@ -268,14 +269,18 @@ install_classlib() {
 install_boost_gil() {
     mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/
     tar -xzf "$SCRIPT_DIR/boost_gil/boost_gil.tar.gz" -C /tmp
-    mv -f /tmp/boost_gil/include/boost "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost"
+
+    rm -rf "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost" # Cleanup dir if exists
+    mv /tmp/boost_gil/include/boost "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost"
 }
 
 install_gil_numeric() {
     NUMERIC_TMP_DIR=/tmp/numeric
     tar -xzf "$SCRIPT_DIR/numeric/numeric.tar.gz" -C /tmp
     mkdir -p "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost/gil/extension/"
-    mv -f "$NUMERIC_TMP_DIR" "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost/gil/extension/numeric"
+
+    rm -rf "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost/gil/extension/numeric" # Cleanup dir if exists
+    mv "$NUMERIC_TMP_DIR" "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost/gil/extension/numeric"
 }
 
 install_dmwm() {
@@ -284,8 +289,8 @@ install_dmwm() {
     mkdir -p $DMWM_TMP_DIR
     tar -xzf "$SCRIPT_DIR/dmwm/dmwm.tar.gz" -C /tmp
     # Move dqmgui-related scripts from DMWM to the config folder
-    mv -f "$DMWM_TMP_DIR/dqmgui" "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/"
-
+    rm -rf "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/" # Cleanup dir if exists
+    mv "$DMWM_TMP_DIR/dqmgui" "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/"
     rm -rf $DMWM_TMP_DIR
 }
 

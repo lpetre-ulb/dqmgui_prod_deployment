@@ -53,7 +53,7 @@ preliminary_checks() {
 
     # Make sure you can only run the script on the DQM servers
     case $HOSTNAME in
-    dqmsrv-c2a06-07-01 | dqmsrv-c2a06-08-01 | dpapagia-dev-vm*)
+    dqmsrv-c2a06-07-01 | dqmsrv-c2a06-08-01 | dqmfu-c2b02-46-01 | dpapagia-dev-vm*)
         echo "Valid DQM GUI server: $HOSTNAME"
         ;;
     *)
@@ -342,7 +342,7 @@ source $ROOT_INSTALLATION_DIR/bin/thisroot.sh
 
 # Crete the Python3 virtual environment for the GUI
 _create_python_venv() {
-    python_exe=$(which python3)
+    python_exe=$(which python${PYTHON_VERSION})
 
     python_venv_dir=$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/venv
     if [ -d "$python_venv_dir" ]; then
@@ -359,8 +359,8 @@ _create_python_venv() {
     python_venv_exe=$python_venv_dir/bin/python
 
     # Needed for specifying the PYTHONPATH later
-    PYTHON_VERSION=$($python_exe --version | cut -d ' ' -f 2 | cut -d '.' -f 1,2)
-    export PYTHON_VERSION
+    # PYTHON_VERSION=$($python_exe --version | cut -d ' ' -f 2 | cut -d '.' -f 1,2)
+    # export PYTHON_VERSION
 
     PYTHON_LIB_DIR_NAME=lib/python$PYTHON_VERSION/site-packages
     export PYTHON_LIB_DIR_NAME

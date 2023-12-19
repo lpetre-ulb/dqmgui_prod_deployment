@@ -26,9 +26,6 @@ EUID_USER_DQM=40454
 # Main directory we're installing into.
 INSTALLATION_DIR=/data/srv
 
-# Where ROOT will be installed
-ROOT_INSTALLATION_DIR=$INSTALLATION_DIR/root
-
 # This scipt's directory
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
@@ -37,15 +34,7 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 # based on the version of the package (DMWM and DQMGUI).
 source $SCRIPT_DIR/config.sh
 
-## Internal temporary paths
 TMP_BASE_PATH=/tmp
-ROOT_TMP_DIR="${TMP_BASE_PATH}/root"
-ROOT_TMP_BUILD_DIR="${TMP_BASE_PATH}/root_build"
-ROTOGLUP_TMP_DIR="${TMP_BASE_PATH}/rotoglup"
-CLASSLIB_TMP_DIR="${TMP_BASE_PATH}/classlib-3.1.3"
-DMWM_TMP_DIR="${TMP_BASE_PATH}/dmwm"
-NUMERIC_TMP_DIR="${TMP_BASE_PATH}/numeric"
-DQMGUI_TMP_DIR="${TMP_BASE_PATH}/dqmgui"
 
 # Preliminary checks to do before installing the GUI
 preliminary_checks() {
@@ -596,6 +585,17 @@ for ARGUMENT in "$@"; do
     VALUE="${ARGUMENT:$KEY_LENGTH+1}"
     eval "$KEY=$VALUE"
 done
+
+## Internal temporary paths
+ROOT_TMP_DIR="${TMP_BASE_PATH}/root"
+ROOT_TMP_BUILD_DIR="${TMP_BASE_PATH}/root_build"
+ROTOGLUP_TMP_DIR="${TMP_BASE_PATH}/rotoglup"
+CLASSLIB_TMP_DIR="${TMP_BASE_PATH}/classlib-3.1.3"
+DMWM_TMP_DIR="${TMP_BASE_PATH}/dmwm"
+NUMERIC_TMP_DIR="${TMP_BASE_PATH}/numeric"
+DQMGUI_TMP_DIR="${TMP_BASE_PATH}/dqmgui"
+# Where ROOT will be installed
+ROOT_INSTALLATION_DIR=$INSTALLATION_DIR/root
 
 # Go to the installation directory
 cd $INSTALLATION_DIR/

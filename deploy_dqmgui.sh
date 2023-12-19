@@ -595,7 +595,7 @@ DMWM_TMP_DIR="${TMP_BASE_PATH}/dmwm"
 NUMERIC_TMP_DIR="${TMP_BASE_PATH}/numeric"
 DQMGUI_TMP_DIR="${TMP_BASE_PATH}/dqmgui"
 # Where ROOT will be installed
-ROOT_INSTALLATION_DIR=$INSTALLATION_DIR/root
+ROOT_INSTALLATION_DIR="$INSTALLATION_DIR/root"
 
 # Go to the installation directory
 cd $INSTALLATION_DIR/

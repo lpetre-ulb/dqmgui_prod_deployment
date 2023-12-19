@@ -37,6 +37,16 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 # based on the version of the package (DMWM and DQMGUI).
 source $SCRIPT_DIR/config.sh
 
+## Internal temporary paths
+TMP_BASE_PATH=/tmp
+ROOT_TMP_DIR="${TMP_BASE_PATH}/root"
+ROOT_TMP_BUILD_DIR="${TMP_BASE_PATH}/root_build"
+ROTOGLUP_TMP_DIR="${TMP_BASE_PATH}/rotoglup"
+CLASSLIB_TMP_DIR="${TMP_BASE_PATH}/classlib-3.1.3"
+DMWM_TMP_DIR="${TMP_BASE_PATH}/dmwm"
+NUMERIC_TMP_DIR="${TMP_BASE_PATH}/numeric"
+DQMGUI_TMP_DIR="${TMP_BASE_PATH}/dqmgui"
+
 # Preliminary checks to do before installing the GUI
 preliminary_checks() {
     # Make sure we don't have superuser privileges
@@ -93,7 +103,7 @@ check_dependencies() {
     # Instead of doing a 'yum list' per package, it may be faster to just
     # ask all of them at once, and dump to file. Then grep the file.
     echo -n "Getting system packages..."
-    tmp_yum_list=/tmp/yum_list.txt
+    tmp_yum_list="${TMP_BASE_PATH}/yum_list.txt"
     eval "yum list ${required_packages[*]}" >$tmp_yum_list
     echo "Done"
 
@@ -204,9 +214,8 @@ create_directories() {
 }
 
 install_rotoglup() {
-    ROTOGLUP_TMP_DIR=/tmp/rotoglup
     mkdir -p $ROTOGLUP_TMP_DIR
-    tar -xzf "$SCRIPT_DIR/rotoglup/rotoglup.tar.gz" -C /tmp
+    tar -xzf "$SCRIPT_DIR/rotoglup/rotoglup.tar.gz" -C "$TMP_BASE_PATH"
 
     cd $ROTOGLUP_TMP_DIR
     #patch -p1 < $SCRIPT_DIR/rotoglup/patches/01.patch
@@ -232,9 +241,9 @@ compile_classlib() {
 # Classlib is needed both as a shared object and for its header files for DQMGUI compilation.
 install_classlib() {
     # Temporary directory to extract to
-    CLASSLIB_TMP_DIR=/tmp/classlib-3.1.3
+
     mkdir -p $CLASSLIB_TMP_DIR
-    tar -xf "$SCRIPT_DIR/classlib/classlib-3.1.3.tar.bz2" -C /tmp
+    tar -xf "$SCRIPT_DIR/classlib/classlib-3.1.3.tar.bz2" -C "${TMP_BASE_PATH}"
 
     # Apply code patches I found on cmsdist. The 7th one is ours, and has some extra needed fixes.
     cd $CLASSLIB_TMP_DIR
@@ -268,15 +277,15 @@ install_classlib() {
 
 install_boost_gil() {
     mkdir -p $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/
-    tar -xzf "$SCRIPT_DIR/boost_gil/boost_gil.tar.gz" -C /tmp
+    tar -xzf "$SCRIPT_DIR/boost_gil/boost_gil.tar.gz" -C "${TMP_BASE_PATH}"
 
     rm -rf "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost" # Cleanup dir if exists
-    mv /tmp/boost_gil/include/boost "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost"
+    mv "${TMP_BASE_PATH}/boost_gil/include/boost" "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost"
 }
 
 install_gil_numeric() {
-    NUMERIC_TMP_DIR=/tmp/numeric
-    tar -xzf "$SCRIPT_DIR/numeric/numeric.tar.gz" -C /tmp
+
+    tar -xzf "$SCRIPT_DIR/numeric/numeric.tar.gz" -C "${TMP_BASE_PATH}"
     mkdir -p "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost/gil/extension/"
 
     rm -rf "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost/gil/extension/numeric" # Cleanup dir if exists
@@ -285,9 +294,9 @@ install_gil_numeric() {
 
 install_dmwm() {
     # Temporary directory to clone DMWM deployment scripts into
-    DMWM_TMP_DIR=/tmp/dmwm
+
     mkdir -p $DMWM_TMP_DIR
-    tar -xzf "$SCRIPT_DIR/dmwm/dmwm.tar.gz" -C /tmp
+    tar -xzf "$SCRIPT_DIR/dmwm/dmwm.tar.gz" -C "${TMP_BASE_PATH}"
     # Move dqmgui-related scripts from DMWM to the config folder
     rm -rf "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui" # Cleanup dir if exists
     mv "$DMWM_TMP_DIR/dqmgui" "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui"
@@ -351,7 +360,7 @@ _create_python_venv() {
     mkdir -p "$python_venv_dir"
 
     # Extract the downloaded python packages
-    tar -xzf "$SCRIPT_DIR/pypi/pypi.tar.gz" -C /tmp
+    tar -xzf "$SCRIPT_DIR/pypi/pypi.tar.gz" -C "${TMP_BASE_PATH}"
     echo -n "INFO: Creating virtual environment at $python_venv_dir"
     $python_exe -m venv "$python_venv_dir"
 
@@ -366,21 +375,21 @@ _create_python_venv() {
     export PYTHON_LIB_DIR_NAME
 
     # Install pip
-    unzip -u /tmp/pip/pip*whl -d /tmp/pip/pip
+    unzip -u ${TMP_BASE_PATH}/pip/pip*whl -d "${TMP_BASE_PATH}/pip/pip"
     if [ -d "$python_venv_dir/$PYTHON_LIB_DIR_NAME/pip" ]; then
         rm -rf "$python_venv_dir/$PYTHON_LIB_DIR_NAME/pip"
     fi
 
     # pipipipi
-    mv /tmp/pip/pip/pip "$python_venv_dir/$PYTHON_LIB_DIR_NAME/pip"
-    rm -rf /tmp/pip/pip
+    mv "${TMP_BASE_PATH}/pip/pip/pip" "$python_venv_dir/$PYTHON_LIB_DIR_NAME/pip"
+    rm -rf "${TMP_BASE_PATH}/pip/pip"
 
     # Install wheels
-    eval "${python_venv_exe} -m pip install --no-index --find-links /tmp/pip /tmp/pip/*"
+    eval "${python_venv_exe} -m pip install --no-index --find-links ${TMP_BASE_PATH}/pip ${TMP_BASE_PATH}/pip/*"
     eval "${python_venv_exe} -m pip install $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128"
 
     cd "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/"
-    rm -rf /tmp/pip
+    rm -rf "${TMP_BASE_PATH}/pip"
     echo "Done"
 }
 
@@ -409,10 +418,10 @@ compile_dqmgui() {
     fi
 
     # python3-config is not always in a predictable place
-    python_config_cmd=$(which python3-config) || python_config_cmd=$(find /usr/bin -name "python3*-config" | head -1)
+    python_config_cmd=$(which python${PYTHON_VERSION}-config) || python_config_cmd=$(find /usr/bin -name "python3*-config" | head -1)
 
     if [ -z "$python_config_cmd" ]; then
-        echo "ERROR: Could not find python3-config"
+        echo "ERROR: Could not find python${PYTHON_VERSION}-config"
         exit 1
     fi
     # The actual build command. Uses the makefile in the DQMGUI's repo.
@@ -448,8 +457,7 @@ install_dqmgui() {
     source "$INSTALLATION_DIR/root/bin/thisroot.sh"
 
     # Temporary directory to clone GUI into
-    DQMGUI_TMP_DIR=/tmp/dqmgui
-    tar -xzf "$SCRIPT_DIR/dqmgui/dqmgui.tar.gz" -C /tmp
+    tar -xzf "$SCRIPT_DIR/dqmgui/dqmgui.tar.gz" -C "${TMP_BASE_PATH}"
 
     # Move dqmgui source and bin files to appropriate directory
     if [ -d "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/cms/dqmgui/$DQMGUI_GIT_TAG" ]; then
@@ -511,7 +519,7 @@ install_jsroot() {
 
 # Extract the ROOT tar to a tmp folder for compilation
 install_root() {
-    tar -xzf "$SCRIPT_DIR/root/root.tar.gz" -C /tmp
+    tar -xzf "$SCRIPT_DIR/root/root.tar.gz" -C "${TMP_BASE_PATH}"
     #if [ -d $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/root ]; then
     #	rm -rf $INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/root
     #fi
@@ -520,8 +528,6 @@ install_root() {
 }
 
 compile_root() {
-    ROOT_TMP_DIR=/tmp/root
-    ROOT_TMP_BUILD_DIR=/tmp/root_build
     if [ ! -d $ROOT_TMP_DIR ]; then
         echo "ERROR: ROOT source was not found in $ROOT_TMP_DIR"
         exit 1
@@ -533,11 +539,20 @@ compile_root() {
     fi
     mkdir -p $ROOT_TMP_BUILD_DIR
     cd $ROOT_TMP_BUILD_DIR
-    cmake -DCMAKE_INSTALL_PREFIX=$ROOT_INSTALLATION_DIR $ROOT_TMP_DIR -DPython3_ROOT_DIR=$(which python3) -Dtesting=OFF -Dbuiltin_gtest=OFF
+    cmake -DCMAKE_INSTALL_PREFIX=$ROOT_INSTALLATION_DIR $ROOT_TMP_DIR -DPython3_ROOT_DIR="$(which python${PYTHON_VERSION})" -Dtesting=OFF -Dbuiltin_gtest=OFF
     cmake --build . --target install -j $(nproc)
     cd $INSTALLATION_DIR
     rm -rf $ROOT_TMP_DIR $ROOT_TMP_BUILD_DIR
 }
+
+# Cleanup temporary directories, remove cronjobs
+function _cleanup() {
+    rm -rf $ROOT_TMP_DIR $ROOT_TMP_BUILD_DIR $ROTOGLUP_TMP_DIR $CLASSLIB_TMP_DIR $DMWM_TMP_DIR $NUMERIC_TMP_DIR $DQMGUI_TMP_DIR
+    clean_crontab
+    clean_acrontab
+}
+
+trap _cleanup SIGINT
 
 ### Main script ###
 

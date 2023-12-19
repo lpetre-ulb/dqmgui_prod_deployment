@@ -19,10 +19,11 @@ jobs:
           ROOT_GIT_URL: ${{ vars.ROOT_GIT_URL }}
           ROOT_GIT_TAG: ${{ vars.ROOT_GIT_TAG }}
         run: |
+          export RELEASE_TAG=deployment_${DMWM_GIT_TAG}_dqmgui_${DQMGUI_GIT_TAG}_root_${ROOT_GIT_TAG}
           sudo apt update && sudo apt install -y libcurl4-gnutls-dev
           $(which python3) --version
           bash download_dependencies.sh DMWM_GIT_TAG=$DMWM_GIT_TAG DMWM_GIT_URL=$DMWM_GIT_URL DQMGUI_GIT_TAG=$DQMGUI_GIT_TAG ROOT_GIT_URL=$ROOT_GIT_URL ROOT_GIT_TAG=$ROOT_GIT_TAG
-          bash build_installation_package.sh
+          bash build_installation_package.sh TARGET_DIRECTORY="/tmp/dqmgui" ARCHIVE_NAME="dqmgui_$RELEASE_TAG.tar.gz"
           echo "Automatically generated release for making the installation package publicly available.
 
           The release name currently follows the convention:
@@ -38,19 +39,19 @@ jobs:
           * ROOT ([${ROOT_GIT_TAG}](${ROOT_GIT_URL}/tree/${ROOT_GIT_TAG}))
 
           " >> /tmp/release_body.md
-          echo "RELEASE_TAG=deployment_${DMWM_GIT_TAG}_dqmgui_${DQMGUI_GIT_TAG}_root_${ROOT_GIT_TAG}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV
       - name: Archive package artifact
         uses: actions/upload-artifact@v3
         with:
           name: dqmgui-installation-package
           path: |
-            /tmp/dqmgui/dqmgui_installation_package.tar.gz
+            /tmp/dqmgui/dqmgui_${{ env.RELEASE_TAG }}.tar.gz
       # Create a release based on the tags used, so that the artifact is downloadable
       # without a GitHub account.
       - name: Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "/tmp/dqmgui/dqmgui_installation_package.tar.gz"
+          artifacts: "/tmp/dqmgui/dqmgui_${{ env.RELEASE_TAG }}.tar.gz"
           bodyFile: "/tmp/release_body.md"
           tag: ${{ env.RELEASE_TAG }}
           allowUpdates: "true"

@@ -541,8 +541,6 @@ function _cleanup() {
     clean_acrontab
 }
 
-trap _cleanup SIGINT
-
 ### Main script ###
 
 # Declare each step of the installation procedure here. Steps
@@ -596,6 +594,8 @@ NUMERIC_TMP_DIR="${TMP_BASE_PATH}/numeric"
 DQMGUI_TMP_DIR="${TMP_BASE_PATH}/dqmgui"
 # Where ROOT will be installed
 ROOT_INSTALLATION_DIR="$INSTALLATION_DIR/root"
+# Cleanup if interrupted
+trap _cleanup SIGINT
 
 # Go to the installation directory
 cd $INSTALLATION_DIR/

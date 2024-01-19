@@ -78,16 +78,10 @@ preliminary_checks() {
 # Check for needed OS-wide dependencies
 check_dependencies() {
     pkgs_installed=1
-    declare -a required_packages=(patch unzip bzip2 libglvnd-opengl libX11-devel libXext-devel libXft-devel
-        libXpm-devel mesa-libGLU mesa-libGLU-devel perl-Env perl-Switch
-        perl-Thread-Queue glibc-headers libidn libXcursor
-        libXi libXinerama libXrandr perl perl-Digest-MD5 tcsh zsh epel-release
-        libcurl-devel python38 python38-devel boost-python3-devel protobuf-devel jemalloc-devel
-        pcre-devel boost-devel lzo-devel cmake xz-devel openssl-devel
-        libjpeg-turbo-devel libpng-devel gcc-c++ gcc binutils gcc-gfortran mesa-libGL-devel mesa-libGLU-devel
-        glew-devel ftgl-devel fftw-devel cfitsio-devel graphviz-devel libuuid-devel avahi-compat-libdns_sd-devel
-        openldap-devel python3-numpy libxml2-devel gsl-devel readline-devel R-devel R-Rcpp-devel R-RInside-devel
-        xrootd-client)
+    # Read in the required packages
+    read -r _package_list <os_packages.txt
+    # Split into array
+    declare -a required_packages=($_package_list)
 
     # Instead of doing a 'yum list' per package, it may be faster to just
     # ask all of them at once, and dump to file. Then grep the file.

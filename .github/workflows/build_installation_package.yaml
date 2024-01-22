@@ -28,7 +28,8 @@ jobs:
           export DQMGUI_PYTHON_VERSION=$($(which python3) -c 'import platform; print(platform.python_version())')
           export RELEASE_TAG=python_${DQMGUI_PYTHON_VERSION}_deployment_${DMWM_GIT_TAG}_dqmgui_${DQMGUI_GIT_TAG}_root_${ROOT_GIT_TAG}
           sudo apt update && sudo apt install -y libcurl4-gnutls-dev
-          $(which python3) --version
+          # Replace python version inside the config, it will matter during installation
+          sed -iE "s/PYTHON\_VERSION=[0-9]\.[0-9]{1,2}/PYTHON\_VERSION=$(echo $DQMGUI_PYTHON_VERSION | cut -d'.' -f1,2)/" config.sh
           bash download_dependencies.sh PYTHON_VERSION=$DQMGUI_PYTHON_VERSION DMWM_GIT_TAG=$DMWM_GIT_TAG DMWM_GIT_URL=$DMWM_GIT_URL DQMGUI_GIT_TAG=$DQMGUI_GIT_TAG ROOT_GIT_URL=$ROOT_GIT_URL ROOT_GIT_TAG=$ROOT_GIT_TAG
           bash build_installation_package.sh TARGET_DIRECTORY="/tmp/dqmgui" ARCHIVE_NAME="dqmgui_$RELEASE_TAG.tar.gz"
           echo "Automatically generated release for making the installation package publicly available.

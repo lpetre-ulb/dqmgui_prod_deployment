@@ -116,7 +116,7 @@ check_dependencies() {
 clean_crontab() {
     # Filter cronjobs starting in $INSTALLATION_DIR/current/dqmgui and
     # replace crontabs
-    crontab -l 2>/dev/null | grep -v "$INSTALLATION_DIR/current/config/dqmgui" | grep -vE "$INSTALLATION_DIR/current.+logrotate.conf" | crontab -
+    crontab -l 2>/dev/null | grep -v "HOME=/tmp" | grep -v "$INSTALLATION_DIR/current/config/dqmgui" | grep -vE "$INSTALLATION_DIR/current.+logrotate.conf" | crontab -
 }
 
 # Install DQMGUI cronjobs
@@ -126,8 +126,9 @@ install_crontab() {
     (
         crontab -l # Get existing crontabs
         echo "17 2 * * * $INSTALLATION_DIR/current/config/dqmgui/daily"
-        echo "@reboot $INSTALLATION_DIR/current/config/dqmgui/manage sysboot"
         echo "0 3 * * * /usr/sbin/logrotate $INSTALLATION_DIR/current/sw/cms/dqmgui/$DQMGUI_GIT_TAG/128/etc/logrotate.conf --state  $INSTALLATION_DIR/state/dqmgui/logrotate.state --verbose --log $INSTALLATION_DIR/logs/dqmgui/logrotate.log"
+        echo "HOME=/tmp" # Workaround for P5, where the home dir is an NFS mount and isn't immediately available.
+        echo "@reboot (sleep 30 && $INSTALLATION_DIR/current/config/dqmgui/manage sysboot)"
     ) | crontab -
 }
 

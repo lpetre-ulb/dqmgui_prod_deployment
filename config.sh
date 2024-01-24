@@ -7,18 +7,19 @@
 # Target python version. This is important for downloading
 # compatible packages for PyPI. Make sure it's the same
 # with the python version that is running on the target machine.
-PYTHON_VERSION=3.8
+PYTHON_VERSION=3.9
 
 # Tag to use for getting the layouts and manage/deploy scripts
 # See: https://github.com/dmwm/deployment/tags
 #DMWM_GIT_URL=https://github.com/dmwm/deployment
 DMWM_GIT_URL=https://github.com/nothingface0/cms_dmwm_deployment
-DMWM_GIT_TAG=debug
+#DMWM_GIT_TAG=debug
+DMWM_GIT_TAG=85f9f02fc8c62cdbbad601039feb991f27f28d09
 
 # DQMGUI tag to use, see https://github.com/cms-DQM/dqmgui_prod/tags
-#DQMGUI_GIT_TAG=9.8.0
 DQMGUI_GIT_URL=https://github.com/cms-DQM/dqmgui_prod
-DQMGUI_GIT_TAG=python3_backup
+#DQMGUI_GIT_TAG=python3_backup
+DQMGUI_GIT_TAG=ad780c5099f258d3e7b66d34f13f7a3212db527a
 
 # Boost.GIL. At most version 1.67!! The API changed radically after that.
 BOOST_GIL_GIT_URL=https://github.com/boostorg/gil

@@ -1,0 +1,48 @@
+diff --git a/src/iobase/TempFile.cpp b/src/iobase/TempFile.cpp
+index 4c8de81..9500a4a 100644
+--- a/src/iobase/TempFile.cpp
++++ b/src/iobase/TempFile.cpp
+@@ -81,7 +81,7 @@ domkstemp(char *path, ...)
+
+ /** Create a unique temporary file.  */
+ template <typename R, typename T, typename U>
+-inline typename define_if<sizeof(((int (*) (char *, int)) &mkstemps) > NULL), R>::type
++inline typename define_if<sizeof(((int (*) (char *, int)) &mkstemps) != NULL), R>::type
+ domkstemps(T path, U suffixlen, void *)
+ { return mkstemps(path, suffixlen); }
+
+diff --git a/classlib/sysapi/FileNameLock.h b/classlib/sysapi/FileNameLock.h
+index 9eee701..adba6a1 100644
+--- a/classlib/sysapi/FileNameLock.h
++++ b/classlib/sysapi/FileNameLock.h
+@@ -4,6 +4,5 @@
+ # include <cerrno>
+ # ifndef _WIN32
+ #  include <utmp.h>
+-#  include <sys/sysctl.h>
+ # endif
+ #endif // CLASSLIB_SYSAPI_FILE_NAME_LOCK_H
+diff --git a/classlib/sysapi/SystemInfo.h b/classlib/sysapi/SystemInfo.h
+index 739861c..5662556 100644
+--- a/classlib/sysapi/SystemInfo.h
++++ b/classlib/sysapi/SystemInfo.h
+@@ -7,7 +7,6 @@
+ #  include <unistd.h>
+ #  include <sys/param.h>
+ #  include <sys/utsname.h>
+-#  include <sys/sysctl.h>
+ #  if __APPLE__
+ #    include <sys/vmmeter.h>
+ #  elif BSD > 0
+diff --git a/classlib/sysapi/TimeInfo.h b/classlib/sysapi/TimeInfo.h
+index 2618a74..c9ddd9e 100644
+--- a/classlib/sysapi/TimeInfo.h
++++ b/classlib/sysapi/TimeInfo.h
+@@ -8,7 +8,6 @@
+ # else
+ #  include <unistd.h>
+ #  include <fcntl.h>
+-#  include <sys/sysctl.h>
+ #  include <sys/resource.h>
+ #  include <sys/time.h>
+ #  include <time.h>

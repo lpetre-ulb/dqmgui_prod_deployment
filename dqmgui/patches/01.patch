@@ -1,0 +1,26 @@
+diff --git a/etc/makefile b/etc/makefile
+index 0e3ba93..70bf065 100644
+--- a/etc/makefile
++++ b/etc/makefile
+@@ -18,7 +18,7 @@ LDFLAGS      = $(LDFLAGS_$(PLATFORM)) -L. $(shell $(PYTHON_CONFIG) --ldflags --e
+
+ CXXFLAGS     = -D_GNU_SOURCE -D_DARWIN_C_SOURCE -DWITHOUT_CMS_FRAMEWORK=1 -D__STDC_LIMIT_MACROS \
+                -D__STDC_FORMAT_MACROS -U__DEPRECATED -fPIC -g -O2 -W -Wall -Wno-long-long \
+-               -pedantic -std=c++14 -Wno-unused-local-typedefs -I$(SRCDIR) $(patsubst %,-I%,$(INCLUDE_DIRS)) \
++               -pedantic -std=c++17 -Wno-narrowing -Wno-unused-local-typedefs -I$(SRCDIR) $(patsubst %,-I%,$(INCLUDE_DIRS)) \
+                $(shell $(PYTHON_CONFIG) --cflags --includes --embed)
+ ROOTC_LIBS   = -L/usr/lib64/root -lCore -lImt -lRIO -lNet -lHist -lROOTVecOps -lTree \
+                 -lRint -lMatrix -lMathCore -lThread -lMultiProc \
+diff --git a/etc/makefile.plugin b/etc/makefile.plugin
+index 3255100..49c15ff 100644
+--- a/etc/makefile.plugin
++++ b/etc/makefile.plugin
+@@ -16,7 +16,7 @@ CXX            = c++
+ LDFLAGS        = -Wl,-z,defs $(patsubst %,-L%,$(LIBRARY_DIRS))
+ CXXFLAGS       = -D_GNU_SOURCE -DWITHOUT_CMS_FRAMEWORK=1 -D__STDC_LIMIT_MACROS \
+	         -U__DEPRECATED -fPIC -g -O2 -W -Wall -Wno-long-long -Werror \
+-	         -pedantic -std=c++14 $(patsubst %,-I%,$(INCLUDE_DIRS))
++	         -pedantic -std=c++17 $(patsubst %,-I%,$(INCLUDE_DIRS))
+ ROOT_LIBS      = -lCore -lRIO -lNet -lTree -lTreePlayer -lGpad -lGraf3d \
+	         -lGraf -lHist -lMatrix -lPhysics -lPostscript -lASImage -lpng
+ OTHER_LIBS     = -lclasslib -lpcre -lz

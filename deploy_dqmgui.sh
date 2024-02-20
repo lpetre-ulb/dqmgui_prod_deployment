@@ -18,11 +18,6 @@
 # Stop at any non-zero return and display all commands.
 set -ex
 
-### Constants
-
-# The EUID of the authorized user to run the script.
-EUID_USER_DQM=40454
-
 # Main directory we're installing into.
 INSTALLATION_DIR=/data/srv
 
@@ -41,12 +36,6 @@ preliminary_checks() {
     # Make sure we don't have superuser privileges
     if [[ $EUID -eq 0 ]]; then
         echo "This script should not be run with superuser privileges!" 1>&2
-        exit 1
-    fi
-
-    # Make sure only the dqm user can run our script
-    if [[ $EUID -ne $EUID_USER_DQM ]]; then
-        echo "This script must be run as dqm" 1>&2
         exit 1
     fi
 
@@ -276,11 +265,14 @@ install_gil_numeric() {
     mv "$NUMERIC_TMP_DIR" "$INSTALLATION_DIR/$DMWM_GIT_TAG/sw/external/src/boost/gil/extension/numeric"
 }
 
-install_dmwm() {
+# Split DMWM installation to allow a user apply patches
+extract_dmwm() {
     # Temporary directory to clone DMWM deployment scripts into
-
     mkdir -p $DMWM_TMP_DIR
     tar -xzf "$SCRIPT_DIR/dmwm/dmwm.tar.gz" -C "${TMP_BASE_PATH}"
+}
+
+install_dmwm() {
     # Move dqmgui-related scripts from DMWM to the config folder
     rm -rf "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui" # Cleanup dir if exists
     mv "$DMWM_TMP_DIR/dqmgui" "$INSTALLATION_DIR/$DMWM_GIT_TAG/config/dqmgui"
@@ -548,6 +540,7 @@ declare -a installation_steps=(preliminary_checks
     install_rotoglup
     install_classlib
     compile_classlib
+    extract_dmwm
     install_dmwm
     install_root
     compile_root

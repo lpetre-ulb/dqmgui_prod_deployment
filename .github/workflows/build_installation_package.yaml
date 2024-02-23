@@ -63,6 +63,7 @@ jobs:
           name: dqmgui-installation-package
           path: |
             /tmp/dqmgui/dqmgui_${{ env.RELEASE_TAG }}.tar.gz
+          overwrite: true
       # Create a release based on the tags used, so that the artifact is downloadable
       # without a GitHub account.
       - name: Release

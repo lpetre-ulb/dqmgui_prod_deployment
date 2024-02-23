@@ -20,5 +20,11 @@ for ARGUMENT in "$@"; do
     eval "$KEY=$VALUE"
 done
 
+# Check for piggiez
+COMPRESSION_CMD="pigz --best"
+if ! pigz --version >/dev/null 2>&1; then
+    COMPRESSION_CMD="gzip --best"
+fi
+
 mkdir -p "$TARGET_DIRECTORY"
-tar -cf "$TARGET_DIRECTORY/$ARCHIVE_NAME" --exclude "$SOURCE_DIRECTORY/.git" --exclude "$SOURCE_DIRECTORY/.github" "$SOURCE_DIRECTORY" -I "pigz --best"
+tar -cf "$TARGET_DIRECTORY/$ARCHIVE_NAME" --exclude "$SOURCE_DIRECTORY/.git" --exclude "$SOURCE_DIRECTORY/.github" "$SOURCE_DIRECTORY" -I "$COMPRESSION_CMD"

@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Checkout repository
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Download and compress dependencies
@@ -58,7 +58,7 @@ jobs:
           " >> /tmp/release_body.md
           echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV
       - name: Archive package artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dqmgui-installation-package
           path: |

@@ -35,8 +35,8 @@ jobs:
           sed -Ei "s@DMWM\_GIT\_URL=.+@DMWM\_GIT\_URL=${DMWM_GIT_URL}@" config.sh
           sed -Ei "s/DQMGUI\_GIT\_TAG=.+/DQMGUI\_GIT\_TAG=${DQMGUI_GIT_TAG}/" config.sh
           sed -Ei "s@DQMGUI\_GIT\_URL=.+@DQMGUI\_GIT\_URL=${DQMGUI_GIT_URL}@" config.sh
-          sed -Ei "s/ROOT\_GIT\_TAG=.+/ROOT\_GIT\_TAG=${ROOT_GIT_TAG}/" config.sh
-          sed -Ei "s@ROOT\_GIT\_URL=.+@ROOT\_GIT\_URL=${ROOT_GIT_URL}@" config.sh
+          sed -Ei "s/^ROOT\_GIT\_TAG=.+/ROOT\_GIT\_TAG=${ROOT_GIT_TAG}/" config.sh
+          sed -Ei "s@^ROOT\_GIT\_URL=.+@ROOT\_GIT\_URL=${ROOT_GIT_URL}@" config.sh
           bash download_dependencies.sh
           bash build_installation_package.sh TARGET_DIRECTORY="/tmp/dqmgui" ARCHIVE_NAME="dqmgui_$RELEASE_TAG.tar.gz"
           echo "Automatically generated release for making the installation package publicly available.

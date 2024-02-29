@@ -68,7 +68,7 @@ preliminary_checks() {
 check_dependencies() {
     pkgs_installed=1
     # Read in the required packages
-    read -r _package_list <os_packages.txt
+    _package_list=$(cat "$SCRIPT_DIR/os_packages.txt")
     # Split into array
     declare -a required_packages=($_package_list)
 

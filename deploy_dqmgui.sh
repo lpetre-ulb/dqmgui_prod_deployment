@@ -34,7 +34,7 @@ TMP_BASE_PATH=/tmp
 # Preliminary checks to do before installing the GUI
 preliminary_checks() {
     # Make sure we don't have superuser privileges
-    if [[ $EUID -eq 0 ]]; then
+    if [ "$(id -u)" -eq 0 ]; then
         echo "This script should not be run with superuser privileges!" 1>&2
         exit 1
     fi

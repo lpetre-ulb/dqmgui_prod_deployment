@@ -12,8 +12,8 @@ PYTHON_VERSION=3.8
 # Tag to use for getting the layouts and manage/deploy scripts
 # See: https://github.com/dmwm/deployment/tags
 # Overriden by GitHub actions secrets.
-DMWM_GIT_URL=https://github.com/dmwm/deployment
-DMWM_GIT_TAG=master
+DMWM_GIT_URL=https://github.com/lpetre-ulb/deployment
+DMWM_GIT_TAG=dqmgui-gem
 
 # DQMGUI tag to use, see https://github.com/cms-DQM/dqmgui_prod/tags
 # Overriden by GitHub actions secrets.
